@@ -5,6 +5,7 @@ import LinkUnstyled from '../components/LinkUnstyled'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import axios from 'axios'
 import { isBot } from '../services/bot-check'
+import { transferAr } from '../services/transfer-ar'
 
 const arweave = Arweave.init({ host: 'arweave.net' })
 
@@ -67,7 +68,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let tries = 3
   const timerId = setInterval(async () => {
     if(await searchForTweet(address)){
-      console.log(address, 'found. Sending all the money rn!')
+      console.log(address, 'tweet found & processed')
       clearInterval(timerId)
     }
     if(!tries--){
@@ -87,8 +88,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 /**
  * For brevity we just search that the wallet was mentioned by anyone at all without further checks.
  * TODO: 
+ * - only check tweets sent from the logged-in user
  * - check user has not already claimed
- * - check user is not a bot
+ * + DONE check user is not a bot
  * - etc
  */
 const searchForTweet = async (address2: string) => {
@@ -118,6 +120,11 @@ const searchForTweet = async (address2: string) => {
 
     if(await isBot(twitterHandle)){
       console.log('BOT DETECTED!')
+      //TODO: log the details
+      //TODO: flag to Sophie mechanism?
+    } else {
+      const txid = await transferAr(address)
+
     }
 
     return true
