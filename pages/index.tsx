@@ -4,6 +4,7 @@ import Arweave from 'arweave'
 import LinkUnstyled from '../components/LinkUnstyled'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import axios from 'axios'
+import { isBot } from '../services/bot-check'
 
 const arweave = Arweave.init({ host: 'arweave.net' })
 
@@ -73,7 +74,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       console.log('giving up searching for tweet.')
       clearInterval(timerId)
     }
-  }, 60000)
+  }, 10000)
 
   return{
     props: {
@@ -92,7 +93,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
  */
 const searchForTweet = async (address2: string) => {
   //DEBUG:
-  const address = 'DF0dxHueHaNAp3I_0q5I0EwJTtWQogvOUZR2x-ADx6Q'
+  // const address = address2
+  const address = 'DF0dxHueHaNAp3I_0q5I0EwJTtWQogvOUZR2x-ADx6Q' // @rosmcmahon_real
+  // const address = 'U5p5oWnzTrs2-4nmd4VWkpxoTSHQOukWtGqq27-zWnw' // @RodSchuffler
+
   console.log('searching for', address)
 
 	const res = await axios({
@@ -109,6 +113,13 @@ const searchForTweet = async (address2: string) => {
 	console.log(res.data.statuses.length)
   if(res.data.statuses.length > 0){
     console.log(res.data.statuses[0].text)
+    let twitterHandle = res.data.statuses[0].user.screen_name
+    console.log(twitterHandle)
+
+    if(await isBot(twitterHandle)){
+      console.log('BOT DETECTED!')
+    }
+
     return true
   }
   return false
