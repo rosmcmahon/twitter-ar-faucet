@@ -11,27 +11,21 @@ const arweave = Arweave.init({ host: 'arweave.net' })
 
 const Index = ({ jwk, address }: InferGetServerSidePropsType<typeof getServerSideProps>): ReactElement => {
   const refDownloadAnchor = useRef<HTMLAnchorElement>(null)
-
   const filename = 'arweave-key-' + address + '.json'
   const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(jwk))
-  
-  if(typeof window !== 'undefined'){
-    const text = encodeURI("A001 ")
 
-    /**
-     * The app is using a no-auth window to fill in the text for the user.
-     * This might fail if the user does not notice a blocked popup window.
-     * Future version will use "3-legged OAuth" from the Twitter API to send
-     * on the user's behalf from this webpage for a smoother experience. It 
-     * is omitted now for brevity, as 3-legged OAuth requires quite a lot of
-     * set up steps, but it will be included in the final app.
-     */
-    window.open(
-      `https://twitter.com/intent/tweet?text=${text}${address}`,
-      "mywin",
-      "left=20,top=20,width=500,height=448,toolbar=1,resizable=0"
-    );
+  const onPostTweet = () => {
+    if(typeof window !== 'undefined'){
+      const text = encodeURI("A001 ")
+  
+      const wref = window.open(
+        `https://twitter.com/intent/tweet?text=${text}${address}`,
+        "twitpostpopup",
+        `left=${window.screenX + 100},top=${window.screenY + 100},width=500,height=448,toolbar=no`
+      )
+    }
   }
+
 
 
   return (
@@ -39,6 +33,7 @@ const Index = ({ jwk, address }: InferGetServerSidePropsType<typeof getServerSid
       <Typography variant="h4">Twitter bot</Typography>
 
       <Typography variant='body1'>Please allow popup for Twitter tweet, and then </Typography>
+      <Button variant='contained' onClick={onPostTweet}>Post a Tweet</Button>
 
       <Button variant='contained' onClick={()=>refDownloadAnchor.current!.click()} >
         Download new wallet
