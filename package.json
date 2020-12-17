@@ -10,23 +10,27 @@
     "test": "jest"
   },
   "dependencies": {
-    "@material-ui/core": "^4.11.0",
-    "arweave": "^1.9.1",
+    "@material-ui/core": "^4.11.2",
+    "ansi-colors": "^4.1.1",
+    "arweave": "^1.10.0",
     "axios": "^0.21.0",
     "botometer": "^1.0.12",
-    "next": "latest",
+    "fontsource-roboto-mono": "^3.1.5",
+    "knex": "^0.21.13",
+    "next": "^10.0.3",
+    "pg": "^8.5.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
   "devDependencies": {
-    "@testing-library/react": "^11.1.0",
-    "@types/jest": "^26.0.15",
-    "@types/node": "^14.0.27",
-    "@types/react": "^16.9.43",
-    "@types/react-dom": "^16.9.9",
-    "babel-jest": "^26.6.1",
-    "jest": "^26.6.1",
+    "@testing-library/react": "^11.2.2",
+    "@types/jest": "^26.0.19",
+    "@types/node": "^14.14.12",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "jest": "^26.6.3",
     "jest-watch-typeahead": "^0.6.1",
-    "typescript": "^4.0.5"
+    "ts-jest": "^26.4.4",
+    "typescript": "^4.1.3"
   }
 }
