@@ -1,6 +1,6 @@
 import next from "next"
 const nextApp = next({ dev: true })
-import { isBot } from './bot-check'
+import { botCheck } from './bot-check'
 
 
 
@@ -19,20 +19,20 @@ describe('bot-check test', () => {
 
 	it('tests non-bot @rosmcmahon_real is not a bot', async () => {
 		expect.assertions(1)
-		const result = await isBot('rosmcmahon_real')
-		expect(result.value).toBeFalsy()
+		const result = await botCheck('rosmcmahon_real')
+		expect(result.passed).toBeFalsy()
 	})
 
 	it('tests known bot @wayback_exe is a bot', async () => {
 		expect.assertions(1)
-		const result = await isBot('wayback_exe')
-		expect(result.value).toBeTruthy()
+		const result = await botCheck('wayback_exe')
+		expect(result.passed).toBeTruthy()
 	})
 
 	it('tests known bot @RodSchuffler is a bot', async () => {
 		expect.assertions(1)
-		const result = await isBot('RodSchuffler')
-		expect(result.value).toBeTruthy()
+		const result = await botCheck('RodSchuffler')
+		expect(result.passed).toBeTruthy()
 	})
 
 

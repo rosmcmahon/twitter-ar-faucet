@@ -31,10 +31,12 @@ const Claim = ({address, onClickNext}: IProps) => {
 		<Container>
 			<Typography variant='h2'>Store data on the permaweb for free</Typography>
 			<Typography variant='body1'>
-				<p>You first need some Arweave tokens which we’d like to send you for free together with a wallet.</p>
-				<p>You'll be amazed how far it'll go!</p>
+				<p>You first need some Arweave tokens which we’d like to send you for free together with a wallet. You'll be amazed how far it'll go!</p>
+				<p>*Note: You need an existing Twitter account for this.</p>
 				Instructions:
 				<ol>
+					<li>Agree to the terms</li>
+					<li>Click the "CLAIM" button to open a Twitter popup</li>
 					<li>Post the Tweet using your Twitter account</li>
 					<li>Click next once done</li>
 				</ol>

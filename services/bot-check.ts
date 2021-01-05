@@ -3,11 +3,12 @@ import { logger } from "../utils/logger";
 const Botometer = require('botometer').Botometer
 
 interface IsBotReturn {
-	value: boolean
+	passed: boolean
 	reason: string
+	botScore: number
 }
 
-export const isBot = async (twitterHandle: string): Promise<IsBotReturn> => {
+export const botCheck = async (twitterHandle: string): Promise<IsBotReturn> => {
 
 	/* Get the botometer score, and twitter data */
 
@@ -27,17 +28,18 @@ export const isBot = async (twitterHandle: string): Promise<IsBotReturn> => {
 	const created_at =		results[0].user.user_data.created_at
 	const display_score =	results[0].display_scores.universal.overall
 
-	logger(twitterHandle,':', screen_name, created_at, display_score)
+	logger(twitterHandle, screen_name, created_at, display_score)
 
 	/* Check account age requirement - this uses > 28 days */
 
 	const daysOld = ( new Date().valueOf() - new Date(created_at).valueOf() ) / 86400000
 
 	if(daysOld < 28){
-		logger('account too young:', daysOld.toFixed(1), 'days')
+		logger(twitterHandle, 'account too young:', daysOld.toFixed(1), 'days')
 		return {
-			value: true,
-			reason: 'account created ' + new Date(created_at)
+			passed: false,
+			reason: 'account created ' + new Date(created_at),
+			botScore: display_score,
 		} 
 	}
 
@@ -45,13 +47,15 @@ export const isBot = async (twitterHandle: string): Promise<IsBotReturn> => {
 
 	if(display_score > 1){
 		return {
-			value: true,
+			passed: false,
 			reason: 'failed botometer ' + display_score,
+			botScore: display_score,
 		}
 	}
 
 	return {
-		value: false,
-		reason: 'OK'
+		passed: true,
+		reason: 'OK ' + display_score,
+		botScore: display_score,
 	}
 }

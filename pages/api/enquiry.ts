@@ -1,27 +1,74 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { isProcessed } from '../../services/db-claimed-check'
+import { checkHandleClaim, isProcessed } from '../../services/db-claimed-check'
+import { getTweetHandleOrWaitTime } from '../../services/tweet-search'
+import { EnquiryData } from '../../types/api-responses'
+import { logger } from '../../utils/logger'
 
-type ResponseData = {
-	processed: boolean
-	success: boolean
-} | { error: string }
 
-export default async (req: NextApiRequest, res: NextApiResponse<ResponseData>) => {
-	const { address } = req.query
+
+export default async (
+	request: NextApiRequest, 
+	response: NextApiResponse<EnquiryData | { error: string }>
+) => {
+	const { address } = request.query
+
+	//TODO: blacklist/rate-limit IPs
+	console.log('API:remoteAddress', request.socket.remoteAddress)
+  console.log('API:address()', request.socket.address())
 
 	try {
 		if(!address || typeof address !== 'string' || address.length !== 43){
-			return res.status(400).json({ error: 'invalid parameter' })
+			return response.status(400).json({ error: 'invalid parameter' })
+		}
+
+		/**
+		 * STEPS:
+		 * - getTweetHandleOrWaitTime -- optionally return wait time 
+		 * - handleClaimed - optionally return failed
+		 * - isProcessed - final result
+		 */
+
+		const handleOrWait = await getTweetHandleOrWaitTime(address)
+
+		logger('API', handleOrWait)
+
+		if(handleOrWait.value === false){
+			return response.status(200).json({
+				processed: false,
+				approved: false,
+				waitTime: handleOrWait.rateLimitReset,
+				alreadyClaimed: false,
+			})
+		}
+
+
+		const checkHandle = await checkHandleClaim(handleOrWait.handle!, address)
+		
+		logger('API', checkHandle)
+
+		if(checkHandle.exists){
+			return response.status(200).json({
+				processed: true,
+				approved: false,
+				waitTime: 0,
+				alreadyClaimed: true,
+				handle: handleOrWait.handle!,
+			})
 		}
 
 		const result = await isProcessed(address)
 		
-		return res.status(200).json({
+		logger('API', result)
+
+		return response.status(200).json({
 			processed: result.exists,
-			success: result.approved
+			approved: result.approved,
+			waitTime: 0,
+			alreadyClaimed: false,
+			handle: handleOrWait.handle!,
 		})
 
 	} catch (error) {
-		res.status(500).json({ error: 'internal server error'})
+		response.status(500).json({ error: 'internal server error'})
 	}
 }

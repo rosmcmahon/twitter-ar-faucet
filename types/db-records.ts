@@ -6,6 +6,7 @@ export interface UserRecord {
 	bot_score: number
 	address: string
 	approved: boolean
+	reason: string
 }
 
 export interface BlacklistRecord {

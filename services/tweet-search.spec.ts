@@ -21,7 +21,7 @@ describe('tweet-search.ts tests', () => {
 		const result = await getTweetHandle(address)
 
 		expect(result.value).toEqual(true)
-		expect(result.handle.length).toBeGreaterThan(0)
+		expect(result.handle!.length).toBeGreaterThan(0)
 		expect(result.handle).toEqual('RodSchuffler')
 
 	}, 20000)
@@ -34,7 +34,6 @@ describe('tweet-search.ts tests', () => {
 		const result = await getTweetHandle(invalidSearch)
 
 		expect(result.value).toBeFalsy()
-		expect(result.handle.length).toBe(0)
 
 	}, 20000)
 

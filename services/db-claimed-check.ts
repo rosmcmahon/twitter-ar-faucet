@@ -10,15 +10,33 @@ interface QueryResult {
 }
 
 export const isProcessed = async (address: string): Promise<QueryResult> => {
-	return valueUsed({ address })
+	return valueExists({ address })
 }
 
 
-export const handleUsed = async (handle: string): Promise<QueryResult> => {
-	return valueUsed({ handle })
+export const handleClaimed = async (handle: string): Promise<QueryResult> => {
+	return valueExists({ handle })
 }
 
-const valueUsed = async (value: object): Promise<QueryResult> => {
+export const checkHandleClaim = async (handle: string, address: string): Promise<QueryResult> => {
+
+	const handleRec = await valueExists({ handle })
+	const addressRec = await valueExists({ handle, address })
+
+	if(handleRec.exists && !addressRec.exists){
+		return {
+			exists: true,
+			approved: false, //dummy
+		}
+	}
+
+	return {
+		exists: false,
+		approved: false, //dummy
+	}
+}
+
+const valueExists = async (value: object): Promise<QueryResult> => {
 	try {
 		let record = await db<UserRecord>('users').where(value)
 		
@@ -31,11 +49,11 @@ const valueUsed = async (value: object): Promise<QueryResult> => {
 			case 0:
 				return { exists: false, approved: false }
 			default:
-				logger('Error: valueUsed result out of bounds', value)
+				logger('DB Error', 'valueUsed result out of bounds', value)
 				return { exists: false, approved: false }
 		}
 	} catch (error) {
-		logger('An error occurred')
+		logger('An DB error occurred')
 		logger(error)
 		return { exists: false, approved: false }
 	}
