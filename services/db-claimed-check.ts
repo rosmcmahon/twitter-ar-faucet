@@ -9,9 +9,9 @@ interface QueryResult {
 	approved: boolean
 }
 
-export const isProcessed = async (address: string): Promise<QueryResult> => {
-	return valueExists({ address })
-}
+// export const isProcessed = async (address: string): Promise<QueryResult> => {
+// 	return valueExists({ address })
+// }
 
 
 export const handleClaimed = async (handle: string): Promise<QueryResult> => {
@@ -20,19 +20,24 @@ export const handleClaimed = async (handle: string): Promise<QueryResult> => {
 
 export const checkHandleClaim = async (handle: string, address: string): Promise<QueryResult> => {
 
-	const handleRec = await valueExists({ handle })
-	const addressRec = await valueExists({ handle, address })
+	try {
+		const record = await db<UserRecord>('users').where({ handle })
 
-	if(handleRec.exists && !addressRec.exists){
-		return {
-			exists: true,
-			approved: false, //dummy
+		// Note: handle is a primary key in the table
+
+		if(record.length === 1){
+			if(address === record[0].address){
+				return { exists: true, approved: record[0].approved }
+			}
+			return { exists: true, approved: false }
 		}
-	}
 
-	return {
-		exists: false,
-		approved: false, //dummy
+		return { exists: false, approved: false }
+
+	} catch (error) {
+		logger('An DB error occurred')
+		logger(error)
+		return { exists: false, approved: false }	
 	}
 }
 

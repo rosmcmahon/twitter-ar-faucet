@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { checkHandleClaim, isProcessed } from '../../services/db-claimed-check'
+import { checkHandleClaim } from '../../services/db-claimed-check'
 import { getTweetHandleOrWaitTime } from '../../services/tweet-search'
 import { EnquiryData } from '../../types/api-responses'
 import { logger } from '../../utils/logger'
@@ -21,12 +21,7 @@ export default async (
 			return response.status(400).json({ error: 'invalid parameter' })
 		}
 
-		/**
-		 * STEPS:
-		 * - getTweetHandleOrWaitTime -- optionally return wait time 
-		 * - handleClaimed - optionally return failed
-		 * - isProcessed - final result
-		 */
+		/* Step 1. Check the tweet has been posted & get the twitter handle */
 
 		const handleOrWait = await getTweetHandleOrWaitTime(address)
 
@@ -36,11 +31,12 @@ export default async (
 			return response.status(200).json({
 				processed: false,
 				approved: false,
-				waitTime: handleOrWait.rateLimitReset,
+				waitTime: handleOrWait.rateLimitReset, // handle rate-limiting
 				alreadyClaimed: false,
 			})
 		}
 
+		/* Step 2. Check the handle against the DB and return the results */
 
 		const checkHandle = await checkHandleClaim(handleOrWait.handle!, address)
 		
@@ -49,24 +45,19 @@ export default async (
 		if(checkHandle.exists){
 			return response.status(200).json({
 				processed: true,
-				approved: false,
+				approved: checkHandle.approved,
 				waitTime: 0,
 				alreadyClaimed: true,
 				handle: handleOrWait.handle!,
 			})
+		} else {
+			return response.status(200).json({
+				processed: false,
+				approved: false,
+				waitTime: 0,
+				alreadyClaimed: false,
+			})
 		}
-
-		const result = await isProcessed(address)
-		
-		logger('API', result)
-
-		return response.status(200).json({
-			processed: result.exists,
-			approved: result.approved,
-			waitTime: 0,
-			alreadyClaimed: false,
-			handle: handleOrWait.handle!,
-		})
 
 	} catch (error) {
 		response.status(500).json({ error: 'internal server error'})

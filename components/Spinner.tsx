@@ -19,7 +19,6 @@ const Spinner = ({onClickNext, address}: IProps) => {
 	useEffect( () => {
 		let tries = 7
 		let sleepMs = 5000 //(sleepMs*2 <= 315000) // 6 tries over 5'15s
-		let rateLimitWait = 0
 
 		const timercode = async () => {
 			while(tries--){
@@ -38,12 +37,8 @@ const Spinner = ({onClickNext, address}: IProps) => {
 				if(data.processed){
 					logger('spinner', 'processed', data)
 					
-					if(data.alreadyClaimed){
-						setStatusMessage(data.handle! + ' has already claimed free tokens')
-						break;
-					}
-					if(data.approved === false){
-						setStatusMessage('Beep boop! We do not serve bots')
+					if(data.alreadyClaimed && !data.approved){
+						setStatusMessage(data.handle! + ' your claim cannot be processed')
 						break;
 					}
 
@@ -62,6 +57,7 @@ const Spinner = ({onClickNext, address}: IProps) => {
 				/* adjust wait timer */
 
 				let waitTime = sleepMs + data.waitTime
+				//TODO: if rate-limit (waitTime) is set, give a "server busy" warning
 				logger('spinner', address, 'waiting another', waitTime, 'ms...')
 				setStatusMessage('Searching for tweet ' + waitTime + 'ms')
 
