@@ -1,6 +1,7 @@
 import { Button, CircularProgress, LinearProgress, Typography } from '@material-ui/core'
 import Axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
+import theme from '../styles/theme'
 import { EnquiryData } from '../types/api-responses'
 import { logger } from '../utils/logger'
 
@@ -14,7 +15,7 @@ interface IProps {
 const Spinner = ({onClickNext, address}: IProps) => {
 	const [disableNext, setDisableNext] = useState(true)
 	const [statusMessage, setStatusMessage] = useState('Searching for Twitter post...')
-	const [seconds, setSeconds] = useState(0)
+	const [seconds, setSeconds] = useState(0) // in milliseconds
 	const waitTime = useRef(0)
 	const [isProcessing, setIsProcessing] = useState(true)
 
@@ -94,9 +95,12 @@ const Spinner = ({onClickNext, address}: IProps) => {
 	return (
 		<>
 			<Typography variant='h4'>{statusMessage}</Typography>
-			<Typography>{seconds}</Typography><Typography>{waitTime.current}</Typography>
-			{isProcessing &&
-				<><LinearProgress variant='buffer' value={seconds/3150} valueBuffer={waitTime.current/3150} /><br/></>
+			{/* <Typography>{seconds}</Typography><Typography>{waitTime.current}</Typography> */}
+			<br/>
+			{isProcessing ?
+				<><LinearProgress variant='buffer' value={seconds/3150} valueBuffer={waitTime.current/3150} /></>
+				:
+				<><LinearProgress variant='determinate' value={100} color='secondary' /><br/></>
 			}
 			<Button disabled={disableNext} variant='contained' onClick={onClickNext}>Next</Button>
 		</>
