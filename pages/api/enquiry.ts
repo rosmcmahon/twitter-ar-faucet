@@ -47,7 +47,7 @@ export default async (
 				processed: true,
 				approved: checkHandle.approved,
 				waitTime: 0,
-				alreadyClaimed: true,
+				alreadyClaimed: checkHandle.alreadyClaimed,
 				handle: handleOrWait.handle!,
 			})
 		} else {

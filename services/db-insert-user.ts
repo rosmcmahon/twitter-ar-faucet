@@ -16,7 +16,7 @@ export const registerUser = async (record: UserRecord) => {
 		
 	} catch (error) {
 		logger('An error occurred in registerUser')
-		if(error.code && error.code === 23505){
+		if(error.code && Number(error.code) === 23505){
 			logger('Duplicate key value violates unique constraint', error.detail)
 		} else {
 			logger(error)

@@ -29,7 +29,7 @@ const Claim = ({address, onClickNext}: IProps) => {
 
 	return (
 		<Container>
-			<Typography variant='h2'>Store data on the permaweb for free</Typography>
+			<Typography variant='h4'>Store data on the permaweb for free</Typography>
 			<Typography variant='body1'>
 				<p>You first need some Arweave tokens which we’d like to send you for free together with a wallet. You'll be amazed how far it'll go!</p>
 				<p>*Note: You need an existing Twitter account for this.</p>

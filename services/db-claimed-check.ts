@@ -9,56 +9,49 @@ interface QueryResult {
 	approved: boolean
 }
 
-// export const isProcessed = async (address: string): Promise<QueryResult> => {
-// 	return valueExists({ address })
-// }
-
-
-export const handleClaimed = async (handle: string): Promise<QueryResult> => {
-	return valueExists({ handle })
+interface QueryResultExt extends QueryResult {
+	alreadyClaimed: boolean
 }
 
-export const checkHandleClaim = async (handle: string, address: string): Promise<QueryResult> => {
+export const checkHandleClaim = async (handle: string, address: string): Promise<QueryResultExt> => {
 
 	try {
 		const record = await db<UserRecord>('users').where({ handle })
 
-		// Note: handle is a primary key in the table
+		// Note: handle is a primary key in the table. Return values default to false, need to know basis
+		// We could omit 'alreadyClaimed' entirely, but leaving in to test UX & bot check tolerance
 
 		if(record.length === 1){
 			if(address === record[0].address){
-				return { exists: true, approved: record[0].approved }
+				return { exists: true, approved: record[0].approved, alreadyClaimed: false }
 			}
-			return { exists: true, approved: false }
+			return { exists: true, approved: false, alreadyClaimed: true }
 		}
 
-		return { exists: false, approved: false }
+		return { exists: false, approved: false, alreadyClaimed: false }
 
 	} catch (error) {
-		logger('An DB error occurred')
+		logger('DB error occurred')
 		logger(error)
-		return { exists: false, approved: false }	
+		return { exists: false, approved: false, alreadyClaimed: false }	
 	}
 }
 
-const valueExists = async (value: object): Promise<QueryResult> => {
+export const handleClaimed = async (handle: string): Promise<QueryResult> => {
 	try {
-		let record = await db<UserRecord>('users').where(value)
+		const record = await db<UserRecord>('users').where({ handle })
 		
-		switch (record.length) {
-			case 1:
+		if(record.length === 1){
 				return {
 					exists: true,
 					approved: record[0].approved
 				}
-			case 0:
-				return { exists: false, approved: false }
-			default:
-				logger('DB Error', 'valueUsed result out of bounds', value)
+			}
+		else{
 				return { exists: false, approved: false }
 		}
 	} catch (error) {
-		logger('An DB error occurred')
+		logger('DB error occurred')
 		logger(error)
 		return { exists: false, approved: false }
 	}

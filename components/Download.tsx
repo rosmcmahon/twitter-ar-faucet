@@ -6,8 +6,9 @@ import React, { useRef, useState } from 'react'
 interface IProps {
 	jwk: JWKInterface
 	address: string
+	onClickNext: React.MouseEventHandler<HTMLButtonElement>
 }
-const Download = ({ jwk, address }: IProps) => {
+const Download = ({ jwk, address, onClickNext }: IProps) => {
 	const [agree, setAgree] = useState<boolean>(false)
 	const [disableDownload, setDisableDownload] = useState(true)
 
@@ -33,8 +34,11 @@ const Download = ({ jwk, address }: IProps) => {
 				label='No one can help me recover this if I lose it'
 			/>
 
-			<Button disabled={disableDownload} variant='contained' onClick={()=>refDownloadAnchor.current!.click()} >
-				Download new wallet
+			<Button disabled={disableDownload} variant='contained' onClick={(ev) => {
+				refDownloadAnchor.current!.click()
+				onClickNext(ev)
+			}} >
+				Download wallet
 			</Button>
 			<a
 				ref={refDownloadAnchor} 

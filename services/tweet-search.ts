@@ -67,7 +67,11 @@ export const getTweetHandleWithRetry = async (address: string ): Promise<TweetSe
       let resultHandle = await getTweetHandle(address)
       
 			if(resultHandle.value){
-				return Object.assign({ rateLimitReset: 0 }, resultHandle)
+				return {
+          value: true,
+          handle: resultHandle.handle,
+          rateLimitReset: 0,
+        }
       }
 
       // Adjust sleep timers for the next attempt

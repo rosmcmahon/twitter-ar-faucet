@@ -1,6 +1,6 @@
-import { Button, CircularProgress, Typography } from '@material-ui/core'
+import { Button, CircularProgress, LinearProgress, Typography } from '@material-ui/core'
 import Axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { EnquiryData } from '../types/api-responses'
 import { logger } from '../utils/logger'
 
@@ -14,8 +14,24 @@ interface IProps {
 const Spinner = ({onClickNext, address}: IProps) => {
 	const [disableNext, setDisableNext] = useState(true)
 	const [statusMessage, setStatusMessage] = useState('Searching for Twitter post...')
-	const [waitMs, setWaitMs] = useState(0)
+	const [seconds, setSeconds] = useState(0)
+	const waitTime = useRef(0)
+	const [isProcessing, setIsProcessing] = useState(true)
 
+
+	/* useEffect that runs once/second to update `seconds` */
+	useEffect(() => {
+		const interval = 1000
+		const timeout = setTimeout(() => {
+			setSeconds(seconds + interval)
+		}, interval)
+
+		return () => {
+			clearTimeout(timeout)
+		}
+	}, [seconds]) //<= only 'seconds' here
+
+	/* Spinner component useEffect timer. No external state inputs */
 	useEffect( () => {
 		let tries = 7
 		let sleepMs = 5000 //(sleepMs*2 <= 315000) // 6 tries over 5'15s
@@ -35,37 +51,37 @@ const Spinner = ({onClickNext, address}: IProps) => {
 				let data: EnquiryData = res.data
 
 				if(data.processed){
+					setIsProcessing(false)
 					logger('spinner', 'processed', data)
-					
-					if(data.alreadyClaimed && !data.approved){
-						setStatusMessage(data.handle! + ' your claim cannot be processed')
+					if(data.alreadyClaimed){
+						setStatusMessage('You have already attempted a claim '+ data.handle)
 						break;
 					}
-
-					setStatusMessage('Welcome ' + data.handle! + '! Click next to continue')
+					if(!data.approved){
+						setStatusMessage('Beep boop! We do not serve bots '+ data.handle)
+						break;
+					}
+					setStatusMessage('Welcome ' + data.handle + '! Click next to continue')
 					setDisableNext(false)
 					break;
 				} 
 
 				if(tries === 0){
-					setStatusMessage('Giving up searching for the Tweet')
-					break
+					setIsProcessing(false)
+					setStatusMessage('Sorry. We have given up searching for the Tweet')
+					break;
 				}
 
-				logger('spinner', 'not processed yet', data)
-
 				/* adjust wait timer */
-
-				let waitTime = sleepMs + data.waitTime
+				
+				let nextWait = sleepMs + data.waitTime
 				//TODO: if rate-limit (waitTime) is set, give a "server busy" warning
-				logger('spinner', address, 'waiting another', waitTime, 'ms...')
-				setStatusMessage('Searching for tweet ' + waitTime + 'ms')
+				logger('spinner', address, 'waiting another', nextWait, 'ms...')
+				setStatusMessage('Searching for tweet +' + nextWait + 'ms')
 
-				await sleep(waitTime) 
-
-				// Adjust sleep timers for the next attempt
+				waitTime.current = waitTime.current + nextWait
+				await sleep(nextWait) 
 				sleepMs *= 2
-
 			}
 		}
 		timercode()
@@ -73,13 +89,15 @@ const Spinner = ({onClickNext, address}: IProps) => {
 		return () => {
 			tries = 0
 		}
-	}, [])
+	}, []) //<= reminder, no inputs go here
 
 	return (
 		<>
-			<Typography variant='h2'>{statusMessage}</Typography>
-			<CircularProgress size={100} thickness={3.6} /><br/>
-			{/* <CircularProgress size={100} thickness={3.6} variant='determinate' value={100} /><br/> */}
+			<Typography variant='h4'>{statusMessage}</Typography>
+			<Typography>{seconds}</Typography><Typography>{waitTime.current}</Typography>
+			{isProcessing &&
+				<><LinearProgress variant='buffer' value={seconds/3150} valueBuffer={waitTime.current/3150} /><br/></>
+			}
 			<Button disabled={disableNext} variant='contained' onClick={onClickNext}>Next</Button>
 		</>
 	)

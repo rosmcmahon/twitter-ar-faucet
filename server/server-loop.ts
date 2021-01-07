@@ -9,11 +9,11 @@ export const serverLoop = async (address: string) => {
 	
 	/* Wait for Tweet */
 	
-	const handleResult = await getTweetHandleWithRetry(address)
+	const handleResult = await getTweetHandleWithRetry(address) //<= this is a loop if you are wondering ;-)
 
 	if(!handleResult.value){
 		logger(address, 'gave up searching for tweet.')
-		return
+		return;
 	}
 
 	const handle = handleResult.handle!
