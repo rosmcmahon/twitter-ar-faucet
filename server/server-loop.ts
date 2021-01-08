@@ -51,7 +51,10 @@ export const serverLoop = async (address: string) => {
 
 	/* Transfer AR to the new wallet */
 
-	await transferAr(address)
-
+	if(botResult.passed){
+		await transferAr(address)
+	} else{
+		logger(handle, 'no AR transfer for this bot')
+	}
 
 }
