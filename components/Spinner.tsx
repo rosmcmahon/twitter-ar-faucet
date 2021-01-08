@@ -17,6 +17,7 @@ const Spinner = ({onClickNext, address}: IProps) => {
 	const [statusMessage, setStatusMessage] = useState('Searching for Twitter post...')
 	const [seconds, setSeconds] = useState(0) // in milliseconds
 	const waitTime = useRef(0)
+	const nextTime = useRef(0)
 	const [isProcessing, setIsProcessing] = useState(true)
 
 
@@ -75,13 +76,14 @@ const Spinner = ({onClickNext, address}: IProps) => {
 
 				/* adjust wait timer */
 				
-				let nextWait = sleepMs + data.waitTime
+				let wait = sleepMs + data.waitTime
 				//TODO: if rate-limit (waitTime) is set, give a "server busy" warning
-				logger('spinner', address, 'waiting another', nextWait, 'ms...')
-				setStatusMessage('Searching for tweet +' + nextWait + 'ms')
+				logger('spinner', address, 'waiting another', wait, 'ms...')
+				setStatusMessage('Searching for tweet...')
 
-				waitTime.current = waitTime.current + nextWait
-				await sleep(nextWait) 
+				waitTime.current = waitTime.current + wait
+				nextTime.current = wait
+				await sleep(wait) 
 				sleepMs *= 2
 			}
 		}
@@ -95,13 +97,17 @@ const Spinner = ({onClickNext, address}: IProps) => {
 	return (
 		<>
 			<Typography variant='h4'>{statusMessage}</Typography>
-			{/* <Typography>{seconds}</Typography><Typography>{waitTime.current}</Typography> */}
 			<br/>
 			{isProcessing ?
-				<><LinearProgress variant='buffer' value={seconds/3150} valueBuffer={waitTime.current/3150} /></>
+				<>
+					<LinearProgress variant='buffer' value={(seconds/waitTime.current)*100}/>
+					<br/>
+					<Typography>Please wait another {Number(nextTime.current/1000).toFixed(0)} seconds</Typography>
+				</>
 				:
 				<><LinearProgress variant='determinate' value={100} color='secondary' /><br/></>
 			}
+			<br/>
 			<Button disabled={disableNext} variant='contained' onClick={onClickNext}>Next</Button>
 		</>
 	)
