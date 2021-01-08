@@ -1,6 +1,7 @@
 import { botCheck } from "../services/bot-check"
 import { handleClaimed } from "../services/db-claimed-check"
 import { registerUser } from "../services/db-insert-user"
+import { transferAr } from "../services/transfer-ar"
 import { getTweetHandleWithRetry } from "../services/tweet-search"
 import { logger } from "../utils/logger"
 
@@ -43,5 +44,14 @@ export const serverLoop = async (address: string) => {
 		date_handled: new Date().toUTCString(), //now
 	})
 	logger(handle, 'write to db', success)
+	if(!success){
+		logger(handle, 'failure to write record to db', success, 'exiting.')
+		return;
+	}
+
+	/* Transfer AR to the new wallet */
+
+	await transferAr(address)
+
 
 }
