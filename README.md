@@ -14,9 +14,9 @@
 
 ```sql
 CREATE DATABASE twittercannon ENCODING 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE 'en_US.UTF-8' TEMPLATE template0;
+sudo -u postgres -- psql -d twittercannon -f twittercannon.pgsql 
 CREATE USER twittercannon WITH ENCRYPTED PASSWORD 'mypass';
 GRANT ALL PRIVILEGES ON DATABASE twittercannon TO twittercannon;
-sudo -u postgres -- psql -d twittercannon -f twittercannon.pgsql 
 ```
 ```
 npm install
