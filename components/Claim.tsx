@@ -15,7 +15,7 @@ const Claim = ({address, onClickNext}: IProps) => {
 
 	const onClickTweet = async () => {
 
-		const text = encodeURI("my nice message ")
+		const text = encodeURI("@ArweaveTeam ")
 
 		const wref = window.open(
 			`https://twitter.com/intent/tweet?text=${text}${address}`,
