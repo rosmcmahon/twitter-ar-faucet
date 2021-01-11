@@ -1,16 +1,16 @@
 import { botCheck } from "../services/bot-check"
 import { handleClaimed } from "../services/db-claimed-check"
 import { registerUser } from "../services/db-insert-user"
-import { transferAr } from "../services/transfer-ar"
+import { transferAr } from "../services/ar-transfer"
 import { getTweetHandleWithRetry } from "../services/tweet-search"
 import { logger } from "../utils/logger"
 
 
-export const serverLoop = async (address: string) => {
+export const serverSideClaimProcessing = async (address: string) => {
 	
 	/* Wait for Tweet */
 	
-	const handleResult = await getTweetHandleWithRetry(address) //<= this is a loop if you are wondering ;-)
+	const handleResult = await getTweetHandleWithRetry(address) 
 
 	if(!handleResult.value){
 		logger(address, 'gave up searching for tweet.')
