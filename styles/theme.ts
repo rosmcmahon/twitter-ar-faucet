@@ -21,7 +21,7 @@ const theme = createMuiTheme({
   //   },
   // },
   typography: {
-    fontFamily: "Roboto Mono"
+    fontFamily: "Roboto Mono, monospace"
   }
 });
 

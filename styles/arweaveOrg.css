@@ -99,6 +99,15 @@ button {
   button:focus {
     outline: none; }
 
+  button:disabled,
+  button[disabled]{
+    background: #eee;
+    color: #888;
+    border: 1.5px solid #777;
+    box-shadow: 0 6px #777;
+    transform: translateY(0px);
+  }
+
 button.primary {
   background: #646464;
   color: white;
