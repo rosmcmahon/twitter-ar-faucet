@@ -60,7 +60,7 @@ export const getTweetHandleWithRetry = async (address: string ): Promise<TweetSe
 	while(tries--){
     
     let waitTime = sleepMs + rateLimitWait
-		logger(address, 'waiting another', waitTime, 'ms...')
+		logger(address, 'server waiting another', waitTime, 'ms...')
     await sleep(waitTime) 
 
 		try{

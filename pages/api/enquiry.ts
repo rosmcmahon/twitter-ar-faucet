@@ -13,8 +13,7 @@ export default async (
 	const { address } = request.query
 
 	//TODO: blacklist/rate-limit IPs
-	console.log('API:remoteAddress', request.socket.remoteAddress)
-  console.log('API:address()', request.socket.address())
+	logger('API', request.socket.remoteAddress)
 
 	try {
 		if(!address || typeof address !== 'string' || address.length !== 43){

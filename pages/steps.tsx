@@ -20,9 +20,8 @@ const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getSe
 		setActive(step => step + 1)
   }
 
-  useEffect(() => {
-    console.log('UI address', address)
-  }, [])
+  //debug
+  useEffect(() => logger('UI address', address), [])
 
   if(timesUp.current){
     return (
@@ -74,14 +73,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const jwk = await arweave.wallets.generate()
   const address = await arweave.wallets.jwkToAddress(jwk)
   
-  logger(address, 'NEW PAGE LOAD')
+  logger(address, 'NEW PAGE LOAD', new Date().toUTCString())
 
   /* IP Blacklist Code */
 
   //get incoming IP address
   // console.log('connection', context.req.connection.remoteAddress) //https only
   console.log('remoteAddress', context.req.socket.remoteAddress)
-  console.log('address()', context.req.socket.address())
   /** TODO: 
    * - check against blacklist here. 
    * - keep list in db. 
