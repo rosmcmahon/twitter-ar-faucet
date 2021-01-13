@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react'
+import React, { ReactElement, useEffect, useRef, useState } from 'react'
 import { Button, Paper, Step, StepContent, StepLabel, Stepper, Typography } from '@material-ui/core'
 import Arweave from 'arweave'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
@@ -13,6 +13,8 @@ const arweave = Arweave.init({ host: 'arweave.net' })
 
 const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getServerSideProps>): ReactElement => {
   const [active, setActive] = useState(0)
+  const startTime = useRef(new Date().valueOf())
+  const timesUp = useRef(false)
 
 	const onClickNext = () => {
 		setActive(step => step + 1)
@@ -21,6 +23,12 @@ const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getSe
   useEffect(() => {
     console.log('UI address', address)
   }, [])
+
+  if(timesUp.current){
+    return (
+      <h1>You ran out of time. Please try again with a new Tweet.</h1>
+    )
+  }
   
   return (
     <>

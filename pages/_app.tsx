@@ -15,13 +15,12 @@ export default function App({ Component, pageProps }: AppProps): ReactElement {
         <title>Arweave Claim A Token</title>
       </Head>
       <ThemeProvider theme={theme}>
-        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        <div style={{display: 'grid', gridTemplateRows: 'auto 1fr auto', height: '100vh'}}>
+        <div className="layout__inner">
           <Header/>
           <Component {...pageProps} />
-          <Footer/>
         </div>
+        <Footer/>
       </ThemeProvider>
     </>
   )
