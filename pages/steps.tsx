@@ -12,52 +12,65 @@ import theme from '../styles/theme'
 const arweave = Arweave.init({ host: 'arweave.net' })
 
 const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getServerSideProps>): ReactElement => {
-  const [active, setActive] = useState(0)
-  const startTime = useRef(new Date().valueOf())
+
+  const [activeStep, setActiveStep] = useState(0)
+  const [seconds, setSeconds] = useState(0) // in milliseconds
   const [timesUp, setTimesUp] = useState(false)
 
-	const onClickNext = () => {
-		setActive(step => step + 1)
-  }
+  const processed = useRef(false)
+  const setProcessed = (b: boolean) => processed.current = b
 
-  const setTimeup = () => {
-    console.log('setting setTimesUp(true)')
-    setTimesUp(true)
-  }
-
-  useEffect(() => {
-    logger('UI address', address)
-  }, [])
+	/* useEffect that runs once/second to update `seconds` & render */
+	useEffect(() => {
+		const interval = 1000 // 1sec
+		const timeout = setTimeout(() => {
+			setSeconds(seconds + interval)
+			if( (seconds >= 320*interval) && !processed.current){
+				setTimesUp(true)
+			}
+		}, interval)
+		return () => clearTimeout(timeout)
+  }, [seconds])
+  
+  
+  
+  useEffect(() => logger('UI address', address), [])
+  
+	const onClickNext = () => setActiveStep(step => step + 1)
 
   if(timesUp){
     return (
-      <h1>You ran out of time. Please try again with a new Tweet.</h1>
+      <h1>You ran out of time. Please try again with a new Tweet. </h1>
     )
   }
-  
   return (
     <>
-			<Stepper activeStep={active} orientation='vertical' style={{marginBottom: theme.spacing(2)}}>
-				<Step key={'claim'}>
+			<Stepper activeStep={activeStep} orientation='vertical' style={{marginBottom: theme.spacing(2)}}>
+				<Step key={'post step'}>
           <StepLabel>Post the Tweet</StepLabel>
 					<StepContent>
 						<PostStep address={address} onClickNext={onClickNext} />
 					</StepContent>
 				</Step>
-				<Step key={'step key middle'}>
+				<Step key={'spinner step'}>
           <StepLabel>Await Tweet Processing</StepLabel>
 					<StepContent>
-						<SpinnerStep address={address} onClickNext={onClickNext} startTime={startTime.current} setTimeup={setTimeup}  />
+            <SpinnerStep 
+              address={address} 
+              onClickNext={onClickNext} 
+              seconds={seconds}
+              setProcessed={setProcessed}
+            />
 					</StepContent>
 				</Step>
-				<Step key={'step key bottom'}>
+				<Step key={'download step'}>
           <StepLabel>Download Your New Wallet!</StepLabel>
 					<StepContent>
 						<DownloadStep address={address} jwk={jwk} onClickNext={onClickNext} />
 					</StepContent>
 				</Step>
       </Stepper>
-      {active === 3 && (
+      {activeStep === 3 && (
         <Paper square elevation={0} style={{ padding: theme.spacing(3) }}>
           <Typography>All steps completed - Let's see what your wallet can do!</Typography>
           <Button 
