@@ -1,7 +1,7 @@
 export type EnquiryData = {
 	processed: boolean
 	approved: boolean
-	waitTime: number
+	rateLimitWait: number
 	alreadyClaimed: boolean
 	handle?: string
 

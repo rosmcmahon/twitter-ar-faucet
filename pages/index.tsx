@@ -1,6 +1,6 @@
 import { Button, Checkbox, Container, FormControlLabel, Paper, Typography } from '@material-ui/core'
 import React, { useState } from 'react'
-import Claim from '../components/Claim'
+import PostStep from '../components/PostStep'
 import Footer from '../components/Footer'
 
 const IndexPage = () => {

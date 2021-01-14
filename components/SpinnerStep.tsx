@@ -10,9 +10,11 @@ const sleep = async (ms: number) => new Promise<void>(resolve => setTimeout(reso
 interface IProps {
 	onClickNext: React.MouseEventHandler<HTMLButtonElement>
 	address: string
+	startTime: number //ms
+	setTimeup: () => void
 }
 
-const Spinner = ({onClickNext, address}: IProps) => {
+const SpinnerStep = ({onClickNext, address, startTime, setTimeup}: IProps) => {
 	const [disableNext, setDisableNext] = useState(true)
 	const [statusMessage, setStatusMessage] = useState('Searching for Twitter post...')
 	const [seconds, setSeconds] = useState(0) // in milliseconds
@@ -20,12 +22,23 @@ const Spinner = ({onClickNext, address}: IProps) => {
 	const nextTime = useRef(0)
 	const [isProcessing, setIsProcessing] = useState(true)
 
+	// useEffect, run once 
+	useEffect(() => {
+		let start = (new Date().valueOf() - startTime) 
+		start -= start % 1000
+		setSeconds(start)
+		waitTime.current = start
+	}, [])
 
 	/* useEffect that runs once/second to update `seconds` */
 	useEffect(() => {
 		const interval = 1000
 		const timeout = setTimeout(() => {
 			setSeconds(seconds + interval)
+			if(seconds + interval >= 10*interval){
+				console.log('TIME UOP????')
+				setTimeup()
+			}
 		}, interval)
 
 		return () => {
@@ -76,10 +89,10 @@ const Spinner = ({onClickNext, address}: IProps) => {
 
 				/* adjust wait timer */
 				
-				let wait = sleepMs + data.waitTime
+				let wait = sleepMs + data.rateLimitWait
 				//TODO: if rate-limit (waitTime) is set, give a "server busy" warning
 				logger('spinner', address, 'waiting another', wait, 'ms...')
-				setStatusMessage('Searching for tweet...')
+				setStatusMessage('Retrieving tweet data & processing...')
 
 				waitTime.current = waitTime.current + wait
 				nextTime.current = wait
@@ -100,6 +113,7 @@ const Spinner = ({onClickNext, address}: IProps) => {
 			<br/>
 			{isProcessing ?
 				<>
+					<Typography>{seconds}/{waitTime.current}</Typography>
 					<LinearProgress variant='buffer' value={(seconds/waitTime.current)*100}/>
 					<br/>
 					<Typography>Please wait another {Number(nextTime.current/1000).toFixed(0)} seconds</Typography>
@@ -112,5 +126,5 @@ const Spinner = ({onClickNext, address}: IProps) => {
 		</>
 	)
 }
-export default Spinner
+export default SpinnerStep
 

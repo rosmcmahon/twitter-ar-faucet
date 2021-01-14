@@ -8,7 +8,7 @@ interface IProps {
 	address: string
 	onClickNext: React.MouseEventHandler<HTMLButtonElement>
 }
-const Download = ({ jwk, address, onClickNext }: IProps) => {
+const DownloadStep = ({ jwk, address, onClickNext }: IProps) => {
 	const [agree, setAgree] = useState<boolean>(false)
 	const [disableDownload, setDisableDownload] = useState(true)
 
@@ -51,4 +51,4 @@ const Download = ({ jwk, address, onClickNext }: IProps) => {
 	)
 }
 
-export default Download
+export default DownloadStep

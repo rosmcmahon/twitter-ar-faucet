@@ -30,7 +30,7 @@ export default async (
 			return response.status(200).json({
 				processed: false,
 				approved: false,
-				waitTime: handleOrWait.rateLimitReset, // handle rate-limiting
+				rateLimitWait: handleOrWait.rateLimitReset, // handle rate-limiting
 				alreadyClaimed: false,
 			})
 		}
@@ -45,7 +45,7 @@ export default async (
 			return response.status(200).json({
 				processed: true,
 				approved: checkHandle.approved,
-				waitTime: 0,
+				rateLimitWait: 0,
 				alreadyClaimed: checkHandle.alreadyClaimed,
 				handle: handleOrWait.handle!,
 			})
@@ -53,7 +53,7 @@ export default async (
 			return response.status(200).json({
 				processed: false,
 				approved: false,
-				waitTime: 0,
+				rateLimitWait: 0,
 				alreadyClaimed: false,
 			})
 		}

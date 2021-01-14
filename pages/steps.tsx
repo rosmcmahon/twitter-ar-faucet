@@ -2,9 +2,9 @@ import React, { ReactElement, useEffect, useRef, useState } from 'react'
 import { Button, Paper, Step, StepContent, StepLabel, Stepper, Typography } from '@material-ui/core'
 import Arweave from 'arweave'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import Spinner from '../components/Spinner'
-import Claim from '../components/Claim'
-import Download from '../components/Download'
+import SpinnerStep from '../components/SpinnerStep'
+import PostStep from '../components/PostStep'
+import DownloadStep from '../components/DownloadStep'
 import { serverSideClaimProcessing } from '../server/serverSide-processing'
 import { logger } from '../utils/logger'
 import theme from '../styles/theme'
@@ -14,16 +14,22 @@ const arweave = Arweave.init({ host: 'arweave.net' })
 const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getServerSideProps>): ReactElement => {
   const [active, setActive] = useState(0)
   const startTime = useRef(new Date().valueOf())
-  const timesUp = useRef(false)
+  const [timesUp, setTimesUp] = useState(false)
 
 	const onClickNext = () => {
 		setActive(step => step + 1)
   }
 
-  //debug
-  useEffect(() => logger('UI address', address), [])
+  const setTimeup = () => {
+    console.log('setting setTimesUp(true)')
+    setTimesUp(true)
+  }
 
-  if(timesUp.current){
+  useEffect(() => {
+    logger('UI address', address)
+  }, [])
+
+  if(timesUp){
     return (
       <h1>You ran out of time. Please try again with a new Tweet.</h1>
     )
@@ -35,19 +41,19 @@ const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getSe
 				<Step key={'claim'}>
           <StepLabel>Post the Tweet</StepLabel>
 					<StepContent>
-						<Claim address={address} onClickNext={onClickNext} />
+						<PostStep address={address} onClickNext={onClickNext} />
 					</StepContent>
 				</Step>
 				<Step key={'step key middle'}>
           <StepLabel>Await Tweet Processing</StepLabel>
 					<StepContent>
-						<Spinner address={address} onClickNext={onClickNext} />
+						<SpinnerStep address={address} onClickNext={onClickNext} startTime={startTime.current} setTimeup={setTimeup}  />
 					</StepContent>
 				</Step>
 				<Step key={'step key bottom'}>
           <StepLabel>Download Your New Wallet!</StepLabel>
 					<StepContent>
-						<Download address={address} jwk={jwk} onClickNext={onClickNext} />
+						<DownloadStep address={address} jwk={jwk} onClickNext={onClickNext} />
 					</StepContent>
 				</Step>
       </Stepper>
