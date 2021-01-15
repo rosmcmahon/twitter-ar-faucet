@@ -1,16 +1,19 @@
-import { Button, Checkbox, FormControlLabel, Typography } from '@material-ui/core'
+import { Button, Checkbox, FormControlLabel, Paper, Typography, useTheme } from '@material-ui/core'
 import { JWKInterface } from 'arweave/node/lib/wallet'
 import { Container } from 'next/app'
-import React, { useRef, useState } from 'react'
+import React, { ReactElement, useRef, useState } from 'react'
+
 
 interface IProps {
 	jwk: JWKInterface
 	address: string
-	onClickNext: React.MouseEventHandler<HTMLButtonElement>
 }
-const DownloadStep = ({ jwk, address, onClickNext }: IProps) => {
+const DownloadStep = ({ jwk, address }: IProps): ReactElement => {
+
+	const theme = useTheme()
 	const [agree, setAgree] = useState<boolean>(false)
 	const [disableDownload, setDisableDownload] = useState(true)
+	const [downloadClicked, setDownloadClicked] = useState(false)
 
 	const refDownloadAnchor = useRef<HTMLAnchorElement>(null)
   const filename = 'arweave-key-' + address + '.json'
@@ -36,7 +39,7 @@ const DownloadStep = ({ jwk, address, onClickNext }: IProps) => {
 
 			<Button disabled={disableDownload} variant='contained' onClick={(ev) => {
 				refDownloadAnchor.current!.click()
-				onClickNext(ev)
+				setDownloadClicked(true)
 			}} >
 				Download wallet
 			</Button>
@@ -47,6 +50,20 @@ const DownloadStep = ({ jwk, address, onClickNext }: IProps) => {
 				target='_blank' 
 				style={{visibility:'hidden',position:'absolute'}}
 			>	{filename} </a>
+
+			{downloadClicked && (
+        <Paper square elevation={0} style={{ padding: theme.spacing(3) }}>
+          <Typography>All steps completed - Let's see what your wallet can do!</Typography>
+          <Button 
+            variant='contained' color='primary'
+            onClick={()=> window.open('https://www.arweave.org/wallet/complete')}
+            style={{marginTop: theme.spacing(1), marginRight: theme.spacing(1)}}
+          >
+            Explore
+          </Button>
+        </Paper>
+      )}
+
 		</Container>
 	)
 }

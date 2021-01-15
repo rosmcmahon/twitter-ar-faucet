@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
-import { Button, Paper, Step, StepContent, StepLabel, Stepper, Typography } from '@material-ui/core'
+import { Step, StepContent, StepLabel, Stepper, useTheme } from '@material-ui/core'
 import Arweave from 'arweave'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import SpinnerStep from '../components/SpinnerStep'
@@ -7,12 +7,12 @@ import PostStep from '../components/PostStep'
 import DownloadStep from '../components/DownloadStep'
 import { serverSideClaimProcessing } from '../server/serverSide-processing'
 import { logger } from '../utils/logger'
-import theme from '../styles/theme'
 
 const arweave = Arweave.init({ host: 'arweave.net' })
 
 const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getServerSideProps>): ReactElement => {
 
+  const theme = useTheme()
   const [activeStep, setActiveStep] = useState(0)
   const [seconds, setSeconds] = useState(0) // in milliseconds
   const [timesUp, setTimesUp] = useState(false)
@@ -66,22 +66,10 @@ const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getSe
 				<Step key={'download step'}>
           <StepLabel>Download Your New Wallet!</StepLabel>
 					<StepContent>
-						<DownloadStep address={address} jwk={jwk} onClickNext={onClickNext} />
+						<DownloadStep address={address} jwk={jwk} />
 					</StepContent>
 				</Step>
       </Stepper>
-      {activeStep === 3 && (
-        <Paper square elevation={0} style={{ padding: theme.spacing(3) }}>
-          <Typography>All steps completed - Let's see what your wallet can do!</Typography>
-          <Button 
-            variant='contained' color='primary'
-            onClick={()=> window.open('https://www.arweave.org/wallet/complete')}
-            style={{marginTop: theme.spacing(1), marginRight: theme.spacing(1)}}
-          >
-            Explore
-          </Button>
-        </Paper>
-      )}
     </>
   )
 }
