@@ -3,17 +3,40 @@ import { checkHandleClaim } from '../../services/db-claimed-check'
 import { getTweetHandleOrWaitTime } from '../../services/tweet-search'
 import { EnquiryData } from '../../types/api-responses'
 import { logger } from '../../utils/logger'
+import rateLimit from 'express-rate-limit'
 
+const apiLimiter = rateLimit({
+	windowMs: 24* 60 * 60 * 1000,
+	max: 18,
+	message: "Too many requests from your IP.",
+	headers: false,
+})
 
+// Helper method to wait for a middleware to execute before continuing
+// And to throw an error when an error happens in a middleware
+function runMiddleware(req: any, res: any, fn: any) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result: any) => {
+      if (result instanceof Error) {
+        return reject(result)
+      }
+
+      return resolve(result)
+    })
+  })
+}
 
 export default async (
 	request: NextApiRequest, 
 	response: NextApiResponse<EnquiryData | { error: string }>
 ) => {
+
 	const { address } = request.query
 
 	//TODO: blacklist/rate-limit IPs
 	logger('API', request.socket.remoteAddress)
+	await runMiddleware(request, response, apiLimiter)
+
 
 	try {
 		if(!address || typeof address !== 'string' || address.length !== 43){

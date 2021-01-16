@@ -10,12 +10,6 @@ interface TweetSearchResult {
 }
 
 export const getTweetHandle = async (address: string) => {
-  //DEBUG:
-  // if(process.env.NODE_ENV === 'development'){
-  //   // address = 'DF0dxHueHaNAp3I_0q5I0EwJTtWQogvOUZR2x-ADx6Q' // @rosmcmahon_real
-  //   address = 'U5p5oWnzTrs2-4nmd4VWkpxoTSHQOukWtGqq27-zWnw' // @RodSchuffler
-  // }
-
 
   logger(address, 'searching tweets')
 

@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.11.2",
+    "@types/express-rate-limit": "^5.1.1",
     "ansi-colors": "^4.1.1",
     "arweave": "^1.10.0",
     "arweave-uploader": "^1.0.3",
     "axios": "^0.21.1",
     "botometer": "^1.0.12",
+    "express-rate-limit": "^5.2.3",
     "fontsource-roboto-mono": "^3.1.5",
     "knex": "^0.21.13",
     "next": "^10.0.3",

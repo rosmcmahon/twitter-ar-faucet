@@ -1,5 +1,5 @@
 import { Button, CircularProgress, LinearProgress, Typography } from '@material-ui/core'
-import Axios from 'axios'
+import Axios, { AxiosResponse } from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
 import theme from '../styles/theme'
 import { EnquiryData } from '../types/api-responses'
@@ -34,53 +34,65 @@ const SpinnerStep = ({onClickNext, address, seconds, setProcessed}: IProps) => {
 
 		const timercode = async () => {
 			while(tries--){
+				try{
+					let res = await Axios.get('/api/enquiry', {
+						params: {
+							address: address
+						}
+					})
 
-				let res = await Axios.get('/api/enquiry', {
-					params: {
-						address: address
+					if(res.status === 400 || res.status === 500){
+						logger('spinner', 'Enquiry Error', res.data.error)
 					}
-				})
-				if(typeof res.data.error !== 'undefined'){
-					logger('spinner', 'Enquiry Error', res.data.error)
-				}
 			
-				let data: EnquiryData = res.data
+					let data: EnquiryData = res.data
 
-				if(data.processed){
-					setIsProcessing(false)
-					setProcessed(true)
-					logger('spinner', 'processed', data)
-					if(data.alreadyClaimed){
-						setStatusMessage('You have already attempted a claim '+ data.handle)
+					if(data.processed){
+						setIsProcessing(false)
+						setProcessed(true)
+						logger('spinner', 'processed', data)
+						if(data.alreadyClaimed){
+							setStatusMessage('You have already attempted a claim '+ data.handle)
+							break;
+						}
+						if(!data.approved){
+							setStatusMessage('Beep boop! We do not serve bots '+ data.handle)
+							break;
+						}
+						setStatusMessage('Welcome ' + data.handle + '! Click next to continue')
+						setDisableNext(false)
+						break;
+					} 
+
+					if(tries === 0){
+						setIsProcessing(false)
+						setProcessed(true)
+						setStatusMessage('Sorry. No new tweet found on Twitter')
 						break;
 					}
-					if(!data.approved){
-						setStatusMessage('Beep boop! We do not serve bots '+ data.handle)
+
+					/* adjust wait timer */
+					
+					let wait = sleepMs + data.rateLimitWait
+					//TODO: if rate-limit (waitTime) is set, give a "server busy" warning
+					logger('spinner', address, 'waiting another', wait, 'ms...')
+					setStatusMessage('Retrieving tweet data & processing...')
+
+					waitTime.current = waitTime.current + wait
+					nextTime.current = wait
+					await sleep(wait) 
+					sleepMs *= 2
+
+				} catch(e){
+					let res = e.response
+					if(res.status === 429){
+						logger('spinner', res.data)
+						setIsProcessing(false)
+						setProcessed(true)
+						setStatusMessage(res.data)
 						break;
 					}
-					setStatusMessage('Welcome ' + data.handle + '! Click next to continue')
-					setDisableNext(false)
-					break;
-				} 
-
-				if(tries === 0){
-					setIsProcessing(false)
-					setProcessed(true)
-					setStatusMessage('Sorry. No new tweet found on Twitter')
-					break;
 				}
-
-				/* adjust wait timer */
-				
-				let wait = sleepMs + data.rateLimitWait
-				//TODO: if rate-limit (waitTime) is set, give a "server busy" warning
-				logger('spinner', address, 'waiting another', wait, 'ms...')
-				setStatusMessage('Retrieving tweet data & processing...')
-
-				waitTime.current = waitTime.current + wait
-				nextTime.current = wait
-				await sleep(wait) 
-				sleepMs *= 2
 			}
 		}
 		timercode()
