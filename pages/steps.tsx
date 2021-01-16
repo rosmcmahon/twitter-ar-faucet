@@ -40,10 +40,15 @@ const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getSe
 
   if(timesUp){
     return (
+      <div className="page">
+      <div className="page__content homepage ">
       <h1>You ran out of time. Please try again with a new Tweet. </h1>
+      </div></div>
     )
   }
   return (
+    <div className="page">
+    <div className="page__content homepage ">
     <>
 			<Stepper activeStep={activeStep} orientation='vertical' style={{marginBottom: theme.spacing(2)}}>
 				<Step key={'post step'}>
@@ -71,6 +76,7 @@ const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getSe
 				</Step>
       </Stepper>
     </>
+    </div></div>
   )
 }
 export default ClaimStepper
