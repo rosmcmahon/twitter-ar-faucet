@@ -7,13 +7,7 @@ const IndexPage = () => {
   const [ready, setReady] = useState(false)
   return (
     <>
-      <div className="page">
-        <div className="page__content homepage ">
-          <section 
-            className="card-link-section aos-init aos-animate" 
-            data-aos="fade-up" data-aos-easing="linear"
-            data-aos-duration="500"
-          >
+          <section className="card-link-section">
             <div className="card-link-section__inner center">
               <div className="card-link-section__content center">
 
@@ -22,7 +16,7 @@ const IndexPage = () => {
                 <p>
                   You first need some Arweave tokens which we’d like to send you for free together with a wallet. You'll be amazed how far it'll go!
                 </p>
-                *Note: You need an existing Twitter account.<br/>
+                <p>*Note: You need an existing Twitter account.</p>
                 <br/>
                 Instructions:
                 <ol>
@@ -42,10 +36,11 @@ const IndexPage = () => {
                       value={ready.toString()}
                       onChange={()=>setReady(!ready)} 
                     />
-                    <span className='checkmark'></span>
-                      I am ready to post a pre-written Tweet
+                    <span className='checkmark'/>
+                    I am ready to post a pre-written Tweet
                   </label>
-
+                  <div style={{display: 'flex', flexDirection: 'column', 
+                    alignItems: 'center'}}>
                   <button 
                     disabled={!ready} 
                     className='btn' 
@@ -54,13 +49,12 @@ const IndexPage = () => {
                   >
                     Post Tweet
                   </button>
+                  </div>
                 </form>
 
               </div>
             </div>
-          </section><a className="anchor" id="arweave-intro"></a>
-        </div>
-      </div>
+          </section>
     </>
   )
 }

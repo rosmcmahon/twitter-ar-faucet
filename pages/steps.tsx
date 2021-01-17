@@ -7,6 +7,7 @@ import PostStep from '../components/PostStep'
 import DownloadStep from '../components/DownloadStep'
 import { serverSideClaimProcessing } from '../server/serverSide-processing'
 import { logger } from '../utils/logger'
+import OutOfTime from '../components/OutOfTime'
 
 const arweave = Arweave.init({ host: 'arweave.net' })
 
@@ -39,16 +40,11 @@ const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getSe
 	const onClickNext = () => setActiveStep(step => step + 1)
 
   if(timesUp){
-    return (
-      <div className="page">
-      <div className="page__content homepage ">
-      <h1>You ran out of time. Please try again with a new Tweet. </h1>
-      </div></div>
-    )
+    return <OutOfTime/>
   }
   return (
-    <div className="page">
-    <div className="page__content homepage ">
+    <section className="card-link-section">
+    <div className="card-link-section__inner center">
     <>
 			<Stepper activeStep={activeStep} orientation='vertical' style={{marginBottom: theme.spacing(2)}}>
 				<Step key={'post step'}>
@@ -76,7 +72,8 @@ const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getSe
 				</Step>
       </Stepper>
     </>
-    </div></div>
+    </div>
+    </section>
   )
 }
 export default ClaimStepper
@@ -92,7 +89,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   //get incoming IP address
   // console.log('connection', context.req.connection.remoteAddress) //https only
-  console.log('remoteAddress', context.req.socket.remoteAddress)
+  logger(address, 'remoteAddress', context.req.socket.remoteAddress)
   /** TODO: 
    * - check against blacklist here. 
    * - keep list in db. 

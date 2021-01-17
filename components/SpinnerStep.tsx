@@ -1,7 +1,6 @@
-import { Button, CircularProgress, LinearProgress, Typography } from '@material-ui/core'
-import Axios, { AxiosResponse } from 'axios'
+import { LinearProgress } from '@material-ui/core'
+import Axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
-import theme from '../styles/theme'
 import { EnquiryData } from '../types/api-responses'
 import { logger } from '../utils/logger'
 
@@ -104,20 +103,18 @@ const SpinnerStep = ({onClickNext, address, seconds, setProcessed}: IProps) => {
 
 	return (
 		<>
-			<Typography variant='h4'>{statusMessage}</Typography>
+			<h1>{statusMessage}</h1>
 			<br/>
 			{isProcessing ?
 				<>
-					<Typography>{seconds}/{waitTime.current}</Typography>
-					<LinearProgress variant='buffer' value={(seconds/waitTime.current)*100}/>
-					<br/>
-					<Typography>Please wait another {Number(nextTime.current/1000).toFixed(0)} seconds</Typography>
+					{/* <b>{seconds}/{waitTime.current}</b> */}
+					<LinearProgress variant='determinate' value={(seconds/waitTime.current)*100}/>
+					<p>Please wait another {Number(nextTime.current/1000).toFixed(0)} seconds</p>
 				</>
 				:
 				<><LinearProgress variant='determinate' value={100} color='secondary' /><br/></>
 			}
-			<br/>
-			<Button disabled={disableNext} variant='contained' onClick={onClickNext}>Next</Button>
+			<button disabled={disableNext} className='btn' onClick={onClickNext}>Next</button>
 		</>
 	)
 }

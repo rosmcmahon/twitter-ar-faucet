@@ -27,20 +27,20 @@ const PostStep = ({address, onClickNext}: IProps) => {
 	}
 
 	return (
-		<Container>
-			<Typography variant='h4'>Post the tweet </Typography>
+		<>
+			<h1>Post the tweet </h1>
 			<Typography variant='body1'>
 				<ol>
 					<li>Post the Tweet using your personal Twitter account</li>
 					<li>Click next once done</li>
 				</ol>
 	
-				<Button variant='contained' onClick={onClickTweet}>Open Tweet Pop-Up</Button>
+				<button className='btn' onClick={onClickTweet}>Open Tweet Pop-Up</button>
 				<br/>
-				<br/>
-				<Button disabled={disableNext} variant='contained' onClick={onClickNext}>Next</Button>
+			
+				<button disabled={disableNext} className='btn' onClick={onClickNext}>Next</button>
 			</Typography>
-		</Container>
+		</>
 	)
 }
 export default PostStep

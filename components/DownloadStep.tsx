@@ -20,29 +20,44 @@ const DownloadStep = ({ jwk, address }: IProps): ReactElement => {
   const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(jwk))
 
 	return (
-		<Container>
-			<Typography variant="h4">Download your key file</Typography>
+		<>
+			<h1>Download your key file</h1>
 
-			<Typography variant='body1'>
-				<p>
-					Nobody (including the arweave project) can help you recover your wallet if the key file is lost.
-				</p>
-				<p><b>So, remember to keep it safe!</b></p>
-			</Typography>
+			<p>
+				Nobody (including the arweave project) can help you recover your wallet if the key file is lost.
+			</p>
+			<p>So, remember to keep it safe!</p>
+			<br/>
 
-			<FormControlLabel
-					control={<Checkbox checked={agree} onChange={(ev)=>{ 
-						setAgree(!agree); 
-						setDisableDownload(agree) }}/>}
-				label='No one can help me recover this if I lose it'
-			/>
+			<form noValidate={true}>
+				<label 
+					htmlFor='readyDl'
+					className='checkbox-container'
+				>
+					<input 
+						type='checkbox' 
+						id='readyDl' name='readyDl' 
+						value={agree.toString()}
+						onChange={(ev)=>{ 
+							setAgree(!agree); 
+							setDisableDownload(agree) 
+						}} 
+					/>
+					<span className='checkmark'/>
+					No one can help me recover this if I lose it
+				</label>
+			</form>
 
-			<Button disabled={disableDownload} variant='contained' onClick={(ev) => {
-				refDownloadAnchor.current!.click()
-				setDownloadClicked(true)
-			}} >
+			<button 
+				disabled={disableDownload} 
+				className='btn'
+				onClick={(ev) => {
+					refDownloadAnchor.current!.click()
+					setDownloadClicked(true)
+				}} 
+			>
 				Download wallet
-			</Button>
+			</button>
 			<a
 				ref={refDownloadAnchor} 
 				href={dataUri} 
@@ -53,18 +68,18 @@ const DownloadStep = ({ jwk, address }: IProps): ReactElement => {
 
 			{downloadClicked && (
         <Paper square elevation={0} style={{ padding: theme.spacing(3) }}>
-          <Typography>All steps completed - Let's see what your wallet can do!</Typography>
-          <Button 
-            variant='contained' color='primary'
+          <p>All steps completed - Let's see what your wallet can do!</p>
+          <button 
+						className='btn primary' 
             onClick={()=> window.open('https://www.arweave.org/wallet/complete')}
             style={{marginTop: theme.spacing(1), marginRight: theme.spacing(1)}}
           >
             Explore
-          </Button>
+          </button>
         </Paper>
       )}
 
-		</Container>
+		</>
 	)
 }
 

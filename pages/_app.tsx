@@ -16,11 +16,17 @@ export default function App({ Component, pageProps }: AppProps): ReactElement {
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        <div className="layout">
         <div className="layout__inner">
+        <div className="page">
+        <div className="page__content homepage ">
           <Header/>
           <Component {...pageProps} />
         </div>
+        </div>
+        </div>
         <Footer/>
+        </div>
       </ThemeProvider>
     </>
   )
