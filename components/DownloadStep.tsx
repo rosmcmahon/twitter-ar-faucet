@@ -1,19 +1,17 @@
-import { Button, Checkbox, FormControlLabel, Paper, Typography, useTheme } from '@material-ui/core'
 import { JWKInterface } from 'arweave/node/lib/wallet'
-import { Container } from 'next/app'
 import React, { ReactElement, useRef, useState } from 'react'
 
 
 interface IProps {
 	jwk: JWKInterface
 	address: string
+	onClickNext: React.MouseEventHandler<HTMLButtonElement>
 }
-const DownloadStep = ({ jwk, address }: IProps): ReactElement => {
+const DownloadStep = ({ jwk, address, onClickNext }: IProps): ReactElement => {
 
-	const theme = useTheme()
 	const [agree, setAgree] = useState<boolean>(false)
 	const [disableDownload, setDisableDownload] = useState(true)
-	const [downloadClicked, setDownloadClicked] = useState(false)
+	const [disableNext, setDisableNext] = useState(true)
 
 	const refDownloadAnchor = useRef<HTMLAnchorElement>(null)
   const filename = 'arweave-key-' + address + '.json'
@@ -53,7 +51,7 @@ const DownloadStep = ({ jwk, address }: IProps): ReactElement => {
 				className='btn'
 				onClick={(ev) => {
 					refDownloadAnchor.current!.click()
-					setDownloadClicked(true)
+					setDisableNext(false)
 				}} 
 			>
 				Download wallet
@@ -63,21 +61,15 @@ const DownloadStep = ({ jwk, address }: IProps): ReactElement => {
 				href={dataUri} 
 				download={filename} 
 				target='_blank' 
-				style={{visibility:'hidden',position:'absolute'}}
-			>	{filename} </a>
+				style={{visibility:'hidden', position:'absolute'}}
+			>	
+				{filename} 
+			</a>
 
-			{downloadClicked && (
-        <Paper square elevation={0} style={{ padding: theme.spacing(3) }}>
-          <p>All steps completed - Let's see what your wallet can do!</p>
-          <button 
-						className='btn primary' 
-            onClick={()=> window.open('https://www.arweave.org/wallet/complete')}
-            style={{marginTop: theme.spacing(1), marginRight: theme.spacing(1)}}
-          >
-            Explore
-          </button>
-        </Paper>
-      )}
+			<br/>
+			<button disabled={disableNext} className='btn' onClick={onClickNext}>
+				Next
+			</button>
 
 		</>
 	)

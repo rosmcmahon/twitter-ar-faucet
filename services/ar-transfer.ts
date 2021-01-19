@@ -12,15 +12,17 @@ export const transferAr = async (address: string) => {
 		target: address,
 		quantity: "1", //arweave.ar.arToWinston("0.1"),
 	}, jwk)
-	tx.addTag('App-Name', 'rosbot-test')
+	tx.addTag('App-Name', 'twitter-cannon')
 
 	/* TODO: implenent a whole retry post tx scenario */
 	/* We did the above and created a library for it as it became such an issue */
-	try {
-		const txid = await uploadTx(tx, jwk)
-		logger(address, 'AR transfer success. txid:', txid)
-	} catch (e) {
-		logger(address, e.name, ':', e.message)
-		console.log(e)
-	}
+
+	// try {
+	// 	const txid = await uploadTx(tx, jwk)
+	// 	logger(address, 'AR transfer success. txid:', txid)
+	// } catch (e) {
+	// 	logger(address, e.name, ':', e.message)
+	// 	console.log(e)
+	// }
+	console.log('DO AR TRANSFER HERE!')
 }

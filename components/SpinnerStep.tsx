@@ -1,4 +1,4 @@
-import { LinearProgress } from '@material-ui/core'
+import { LinearProgress, useTheme } from '@material-ui/core'
 import Axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
 import { EnquiryData } from '../types/api-responses'
@@ -7,14 +7,14 @@ import { logger } from '../utils/logger'
 const sleep = async (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))
 
 interface IProps {
-	onClickNext: React.MouseEventHandler<HTMLButtonElement>
 	address: string
 	seconds: number //ms
 	setProcessed: (b: boolean) => void
 }
 
-const SpinnerStep = ({onClickNext, address, seconds, setProcessed}: IProps) => {
-	const [disableNext, setDisableNext] = useState(true)
+const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
+
+	const theme = useTheme()
 	const [statusMessage, setStatusMessage] = useState('Searching for Twitter post...')
 
 	const waitTime = useRef(0)
@@ -58,8 +58,7 @@ const SpinnerStep = ({onClickNext, address, seconds, setProcessed}: IProps) => {
 							setStatusMessage('Beep boop! We do not serve bots '+ data.handle)
 							break;
 						}
-						setStatusMessage('Welcome ' + data.handle + '! Click next to continue')
-						setDisableNext(false)
+						setStatusMessage('Welcome ' + data.handle + '!')
 						break;
 					} 
 
@@ -112,9 +111,21 @@ const SpinnerStep = ({onClickNext, address, seconds, setProcessed}: IProps) => {
 					<p>Please wait another {Number(nextTime.current/1000).toFixed(0)} seconds</p>
 				</>
 				:
-				<><LinearProgress variant='determinate' value={100} color='secondary' /><br/></>
+				<>
+					{/* <LinearProgress variant='determinate' value={100} color='secondary' /> */}
+					<h2>All steps completed - Let's see what your wallet can do!</h2>
+					<div style={{display: 'flex', flexDirection: 'column', 
+                    alignItems: 'center'}}>
+						<button 
+							className='btn primary' 
+							onClick={()=> window.open('https://www.arweave.org/wallet/complete')}
+							style={{marginTop: theme.spacing(1), marginRight: theme.spacing(1)}}
+						>
+							Explore
+						</button>
+					</div>
+				</>
 			}
-			<button disabled={disableNext} className='btn' onClick={onClickNext}>Next</button>
 		</>
 	)
 }

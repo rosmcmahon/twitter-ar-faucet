@@ -1,5 +1,4 @@
-import { Button, Checkbox, Container, FormControlLabel, Typography } from '@material-ui/core'
-import { GetServerSideProps } from 'next'
+import { Typography } from '@material-ui/core'
 import React, { useState } from 'react'
 
 
@@ -22,7 +21,6 @@ const PostStep = ({address, onClickNext}: IProps) => {
 			`left=${window.screenX + 100},top=${window.screenY + 100},width=500,height=448,toolbar=no`
 		)
 
-
 		setDisableNext(false)
 	}
 
@@ -44,6 +42,5 @@ const PostStep = ({address, onClickNext}: IProps) => {
 	)
 }
 export default PostStep
-
 
 

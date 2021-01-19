@@ -47,10 +47,16 @@ const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getSe
     <div className="card-link-section__inner center">
     <>
 			<Stepper activeStep={activeStep} orientation='vertical' style={{marginBottom: theme.spacing(2)}}>
+        <Step key={'download step'}>
+          <StepLabel>Download Your New Wallet!</StepLabel>
+					<StepContent>
+						<DownloadStep address={address} jwk={jwk} onClickNext={onClickNext}/>
+					</StepContent>
+				</Step>
 				<Step key={'post step'}>
           <StepLabel>Post the Tweet</StepLabel>
 					<StepContent>
-						<PostStep address={address} onClickNext={onClickNext} />
+						<PostStep address={address} onClickNext={onClickNext}/>
 					</StepContent>
 				</Step>
 				<Step key={'spinner step'}>
@@ -58,16 +64,9 @@ const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getSe
 					<StepContent>
             <SpinnerStep 
               address={address} 
-              onClickNext={onClickNext} 
               seconds={seconds}
               setProcessed={setProcessed}
             />
-					</StepContent>
-				</Step>
-				<Step key={'download step'}>
-          <StepLabel>Download Your New Wallet!</StepLabel>
-					<StepContent>
-						<DownloadStep address={address} jwk={jwk} />
 					</StepContent>
 				</Step>
       </Stepper>
