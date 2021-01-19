@@ -1,19 +1,27 @@
 import col from 'ansi-colors'
+import fs from 'fs'
 
 let DEBUG_MESSAGES = true
 export const setDebugMessagesOn = (b: boolean) => DEBUG_MESSAGES = b
 
 export const logger = (...args: any[]) => {
 	if(DEBUG_MESSAGES){
-		let prefix = '[logger:]'
+		let prefix = '[logger]'
 		if(args.length > 1){
-			prefix = '[' + args[0] + ':]'
+			prefix = '[' + args[0] + ']'
 			args.shift()
 		}
 		if (typeof window === 'undefined') {
-			console.log(col.blue(prefix), ...args)
+			// output on server
+			console.log(col.magenta(prefix), ...args)
+			fs.appendFile(
+				'server-logs.log', 
+				new Date().toUTCString() + '\t' + args.join(' '),
+				()=>{}
+			)
 		}else{
-			console.log('%c' + prefix, 'color: #0000ff', ...args)
+			// output to browser console
+			console.log('%c' + prefix, 'color: #FF00ff', ...args)
 		}
 	}
 	//TODO: add filewrite(logfile.log) here with timestamps
