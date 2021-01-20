@@ -3,13 +3,17 @@ import { logger } from "../utils/logger"
 
 const sleep = async (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))
 
-interface TweetSearchResult {
-  value: boolean;
-  handle?: string;
+interface TweetDataResult {
+  value: boolean
+  handle?: string
+  twitterId?: string
+  tweetId?: string
+}
+interface TweetSearchResult extends TweetDataResult {
   rateLimitReset: number 
 }
 
-export const getTweetHandle = async (address: string) => {
+export const getTweetData = async (address: string): Promise<TweetDataResult>  => {
 
   logger(address, 'searching tweets')
 
@@ -29,12 +33,17 @@ export const getTweetHandle = async (address: string) => {
   
   if(numPosts > 0){
     // choose the oldest tweet - maybe bots are retweeting ?
-    let twitterHandle: string = res.data.statuses[numPosts - 1].user.screen_name
-    logger(address, 'tweet found:', twitterHandle, res.data.statuses[numPosts - 1].text)
+    const tweet = res.data.statuses[numPosts - 1]
+    const twitterHandle: string = tweet.user.screen_name
+    const twitterId: string = tweet.user.id_str
+    const tweetId: string = tweet.id_str
+    logger(address, 'tweet found:', twitterHandle, twitterId, tweet.text)
     
     return {
       value: true,
       handle: twitterHandle,
+      twitterId,
+      tweetId,
     }
   }
 
@@ -58,7 +67,7 @@ export const getTweetHandleWithRetry = async (address: string ): Promise<TweetSe
     await sleep(waitTime) 
 
 		try{
-      let resultHandle = await getTweetHandle(address)
+      let resultHandle = await getTweetData(address)
       
 			if(resultHandle.value){
 				return {
@@ -93,7 +102,7 @@ export const getTweetHandleWithRetry = async (address: string ): Promise<TweetSe
 
 export const getTweetHandleOrWaitTime = async (address: string): Promise<TweetSearchResult> => {
   try {
-    return Object.assign({rateLimitReset: 0}, await getTweetHandle(address))
+    return Object.assign({rateLimitReset: 0}, await getTweetData(address))
   } 
   catch (e) {
     const res = e.response

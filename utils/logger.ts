@@ -24,5 +24,4 @@ export const logger = (...args: any[]) => {
 			console.log('%c' + prefix, 'color: #FF00ff', ...args)
 		}
 	}
-	//TODO: add filewrite(logfile.log) here with timestamps
 }
