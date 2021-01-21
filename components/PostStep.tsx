@@ -13,7 +13,7 @@ const PostStep = ({address, onClickNext}: IProps) => {
 
 	const onClickTweet = async () => {
 
-		const text = encodeURI("@ArweaveTeam ")
+		const text = encodeURI("I'm verifying my Arweave address ")
 
 		const wref = window.open(
 			`https://twitter.com/intent/tweet?text=${text}${address}`,

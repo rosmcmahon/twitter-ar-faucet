@@ -25,9 +25,9 @@ export const serverSideClaimProcessing = async (address: string) => {
 
 	/* Handle already claimed check */
 
-	const accountClaim = await accountClaimed(handle)
-	if(accountClaim.exists){
-		logger(address, handle, 'already claimed', accountClaim.exists, 'exiting.', new Date().toUTCString())
+	const claim = await accountClaimed(twitterId)
+	if(claim.exists){
+		logger(address, handle, 'already claimed', claim.exists, 'exiting.', new Date().toUTCString())
 		return;
 	}
 

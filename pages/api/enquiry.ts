@@ -34,7 +34,7 @@ export default async (
 	const { address } = request.query
 
 	//TODO: blacklist/rate-limit IPs
-	logger('API', request.socket.remoteAddress)
+	logger('API0', request.socket.remoteAddress)
 	await runMiddleware(request, response, apiLimiter)
 
 
@@ -45,32 +45,32 @@ export default async (
 
 		/* Step 1. Check the tweet has been posted & get the twitter handle */
 
-		const handleOrWait = await getTweetHandleOrWaitTime(address)
+		const accountOrWait = await getTweetHandleOrWaitTime(address)
 
-		logger('API', handleOrWait)
+		logger('API1', accountOrWait)
 
-		if(handleOrWait.value === false){
+		if(accountOrWait.value === false){
 			return response.status(200).json({
 				processed: false,
 				approved: false,
-				rateLimitWait: handleOrWait.rateLimitReset, // handle rate-limiting
+				rateLimitWait: accountOrWait.rateLimitReset, // handle rate-limiting
 				alreadyClaimed: false,
 			})
 		}
 
 		/* Step 2. Check the handle against the DB and return the results */
 
-		const checkHandle = await checkAccountClaim(handleOrWait.handle!, address)
+		const checkAccountId = await checkAccountClaim(accountOrWait.twitterId!, address)
 		
-		logger('API', checkHandle)
+		logger('API2', checkAccountId)
 
-		if(checkHandle.exists){
+		if(checkAccountId.exists){
 			return response.status(200).json({
 				processed: true,
-				approved: checkHandle.approved,
+				approved: checkAccountId.approved,
 				rateLimitWait: 0,
-				alreadyClaimed: checkHandle.alreadyClaimed,
-				handle: handleOrWait.handle!,
+				alreadyClaimed: checkAccountId.alreadyClaimed,
+				handle: accountOrWait.handle!,
 			})
 		} else {
 			return response.status(200).json({

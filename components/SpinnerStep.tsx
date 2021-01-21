@@ -20,6 +20,7 @@ const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
 	const waitTime = useRef(0)
 	const nextTime = useRef(0)
 	const [isProcessing, setIsProcessing] = useState(true)
+	const [success, setSuccess] = useState(false)
 
 	// useEffect, run once 
 	useEffect(() => {
@@ -59,6 +60,7 @@ const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
 							break;
 						}
 						setStatusMessage('Welcome ' + data.handle + '!')
+						setSuccess(true)
 						break;
 					} 
 
@@ -104,13 +106,14 @@ const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
 		<>
 			<h1>{statusMessage}</h1>
 			<br/>
-			{isProcessing ?
+			{isProcessing &&
 				<>
 					{/* <b>{seconds}/{waitTime.current}</b> */}
 					<LinearProgress variant='determinate' value={(seconds/waitTime.current)*100}/>
 					<p>Please wait another {Number(nextTime.current/1000).toFixed(0)} seconds</p>
 				</>
-				:
+			}
+			{ success &&
 				<>
 					{/* <LinearProgress variant='determinate' value={100} color='secondary' /> */}
 					<h2>All steps completed - Let's see what your wallet can do!</h2>
