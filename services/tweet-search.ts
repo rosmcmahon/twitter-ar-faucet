@@ -56,6 +56,9 @@ export const getTweetData = async (address: string): Promise<TweetDataResult>  =
 
 export const getTweetDataWithRetry = async (address: string ): Promise<TweetSearchResult> => {
 
+  logger(address, 'hack! waiting an extra 30 seconds for user to download wallet, post tweet, and hit next twice')
+  await sleep(30000)
+
   let sleepMs = 5000 //(sleepMs*2 <= 315000) // 6 tries over 5'15s
   let tries = 6
   let rateLimitWait = 0
