@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "npm run build && next start -p 80",
+    "start": "npm install && npm run build && next start -p 80",
     "test": "jest"
   },
   "dependencies": {
@@ -24,7 +24,8 @@
     "pg": "^8.5.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "twitter-lite": "^0.14.0"
+    "twitter-lite": "^0.14.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@testing-library/react": "^11.2.2",
