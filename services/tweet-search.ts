@@ -37,7 +37,7 @@ export const getTweetData = async (address: string): Promise<TweetDataResult>  =
     const twitterHandle: string = tweet.user.screen_name
     const twitterId: string = tweet.user.id_str
     const tweetId: string = tweet.id_str
-    logger(address, 'tweet found:', twitterHandle, twitterId, tweet.text)
+    logger(address, 'tweet found:', twitterHandle, twitterId, tweetId, tweet.text)
     
     return {
       value: true,
@@ -54,7 +54,7 @@ export const getTweetData = async (address: string): Promise<TweetDataResult>  =
   }
 }
 
-export const getTweetHandleWithRetry = async (address: string ): Promise<TweetSearchResult> => {
+export const getTweetDataWithRetry = async (address: string ): Promise<TweetSearchResult> => {
 
   let sleepMs = 5000 //(sleepMs*2 <= 315000) // 6 tries over 5'15s
   let tries = 6
@@ -67,14 +67,10 @@ export const getTweetHandleWithRetry = async (address: string ): Promise<TweetSe
     await sleep(waitTime) 
 
 		try{
-      let resultHandle = await getTweetData(address)
+      let resultData = await getTweetData(address)
       
-			if(resultHandle.value){
-				return {
-          value: true,
-          handle: resultHandle.handle,
-          rateLimitReset: 0,
-        }
+			if(resultData.value){
+				return Object.assign({rateLimitReset: 0}, resultData)
       }
 
       // Adjust sleep timers for the next attempt

@@ -1,6 +1,6 @@
 import next from "next"
 const nextApp = next({ dev: true })
-import { handleClaimed, isProcessed } from './db-claimed-check'
+import { accountClaimed, isProcessed } from './db-claimed-check'
 
 describe('claimed-check tests', () => {
 
@@ -27,14 +27,14 @@ describe('claimed-check tests', () => {
 
 	it('tests that handleUsed finds correct record', async () => {
 		expect.assertions(2)
-		const result = await handleClaimed('Mr_Robot')
+		const result = await accountClaimed('Mr_Robot')
 		expect(result.exists).toBeTruthy()
 		expect(result.approved).toBeFalsy()
 	})
 
 	it('tests that handleUsed returns record not found', async () => {
 		expect.assertions(1)
-		const result = await handleClaimed('nonexistent-handle')
+		const result = await accountClaimed('nonexistent-handle')
 		expect(result.exists).toBeFalsy()
 	})
 

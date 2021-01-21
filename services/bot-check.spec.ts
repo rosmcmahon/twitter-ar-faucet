@@ -20,19 +20,19 @@ describe('bot-check test', () => {
 	it('tests non-bot @rosmcmahon_real is not a bot', async () => {
 		expect.assertions(1)
 		const result = await botCheck('rosmcmahon_real')
-		expect(result.passed).toBeFalsy()
+		expect(result.passed).toBeTruthy()
 	})
 
 	it('tests known bot @wayback_exe is a bot', async () => {
 		expect.assertions(1)
 		const result = await botCheck('wayback_exe')
-		expect(result.passed).toBeTruthy()
+		expect(result.passed).toBeFalsy()
 	})
 
 	it('tests known bot @RodSchuffler is a bot', async () => {
 		expect.assertions(1)
 		const result = await botCheck('RodSchuffler')
-		expect(result.passed).toBeTruthy()
+		expect(result.passed).toBeFalsy()
 	})
 
 

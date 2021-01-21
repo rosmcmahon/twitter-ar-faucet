@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { checkHandleClaim } from '../../services/db-claimed-check'
+import { checkAccountClaim } from '../../services/db-claimed-check'
 import { getTweetHandleOrWaitTime } from '../../services/tweet-search'
 import { EnquiryData } from '../../types/api-responses'
 import { logger } from '../../utils/logger'
@@ -60,7 +60,7 @@ export default async (
 
 		/* Step 2. Check the handle against the DB and return the results */
 
-		const checkHandle = await checkHandleClaim(handleOrWait.handle!, address)
+		const checkHandle = await checkAccountClaim(handleOrWait.handle!, address)
 		
 		logger('API', checkHandle)
 

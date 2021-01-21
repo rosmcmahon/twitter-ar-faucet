@@ -13,12 +13,12 @@ interface QueryResultExt extends QueryResult {
 	alreadyClaimed: boolean
 }
 
-export const checkHandleClaim = async (handle: string, address: string): Promise<QueryResultExt> => {
+export const checkAccountClaim = async (twitterId: string, address: string): Promise<QueryResultExt> => {
 
 	try {
-		const record = await db<UserRecord>('users').where({ handle })
+		const record = await db<UserRecord>('users').where({ twitterId })
 
-		// Note: handle is a primary key in the table. Return values default to false, need to know basis
+		// Note: twitterId is a primary key in the table. Return values default to false, need to know basis
 		// We could omit 'alreadyClaimed' entirely, but leaving in to test UX & bot check tolerance
 
 		if(record.length === 1){
@@ -37,9 +37,9 @@ export const checkHandleClaim = async (handle: string, address: string): Promise
 	}
 }
 
-export const handleClaimed = async (handle: string): Promise<QueryResult> => {
+export const accountClaimed = async (twitterId: string): Promise<QueryResult> => {
 	try {
-		const record = await db<UserRecord>('users').where({ handle })
+		const record = await db<UserRecord>('users').where({ twitterId })
 		
 		if(record.length === 1){
 				return {

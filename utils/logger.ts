@@ -1,5 +1,7 @@
 import col from 'ansi-colors'
-import fs from 'fs'
+// import fs from 'fs'
+let fs: any
+if(typeof window === 'undefined'){ fs = require('fs') }
 
 let DEBUG_MESSAGES = true
 export const setDebugMessagesOn = (b: boolean) => DEBUG_MESSAGES = b

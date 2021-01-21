@@ -1,41 +1,45 @@
 import { botCheck } from "../services/bot-check"
-import { handleClaimed } from "../services/db-claimed-check"
+import { accountClaimed } from "../services/db-claimed-check"
 import { registerUser } from "../services/db-insert-user"
 import { transferAr } from "../services/ar-transfer"
-import { getTweetHandleWithRetry } from "../services/tweet-search"
+import { getTweetDataWithRetry } from "../services/tweet-search"
 import { logger } from "../utils/logger"
+import { sendTwitterReply } from "../services/twitter-reply"
 
 
 export const serverSideClaimProcessing = async (address: string) => {
 	
 	/* Wait for Tweet */
 	
-	const handleResult = await getTweetHandleWithRetry(address) 
+	const tweetResult = await getTweetDataWithRetry(address) 
 
-	if(!handleResult.value){
+	if(!tweetResult.value){
 		logger(address, 'gave up searching for tweet.', new Date().toUTCString())
 		return;
 	}
 
-	const handle = handleResult.handle!
+	const handle = tweetResult.handle!
+	const twitterId = tweetResult.twitterId!
+
 
 
 	/* Handle already claimed check */
 
-	const handleClaim = await handleClaimed(handle)
-	if(handleClaim.exists){
-		logger(address, handle, 'already claimed', handleClaim.exists, 'exiting.', new Date().toUTCString())
+	const accountClaim = await accountClaimed(handle)
+	if(accountClaim.exists){
+		logger(address, handle, 'already claimed', accountClaim.exists, 'exiting.', new Date().toUTCString())
 		return;
 	}
 
 	/* Do bot check on handle */
 
 	const botResult = await botCheck(handle)
-	logger(address, handle, 'bot-check passed', botResult.passed, botResult.reason, new Date().toUTCString())
+	logger(address, handle, twitterId, 'bot-check passed', botResult.passed, botResult.reason, new Date().toUTCString())
 
 	/* Write out resuls to DB */
 
 	const success = await registerUser({
+		twitterId,
 		handle,
 		address, // UI searches on this
 		approved: botResult.passed,
@@ -52,6 +56,7 @@ export const serverSideClaimProcessing = async (address: string) => {
 	/* Transfer AR to the new wallet */
 
 	if(botResult.passed){
+		await sendTwitterReply(tweetResult.tweetId!, handle)
 		await transferAr(address)
 	} else{
 		logger(handle, 'no AR transfer for this bot')
