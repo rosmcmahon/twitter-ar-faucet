@@ -4,7 +4,8 @@
 
 - Twitter developer account 
 - Botomoeter API account
-- install postgres
+- install docker, docker-compose
+- enable ports 22,80,443 (ufw for example)
 
 ## Install & run
 
@@ -12,15 +13,9 @@
 - copy the arweave faucet jwk to `secrets/jwk.json`
 - run the following
 
-```sql
-CREATE DATABASE twittercannon ENCODING 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE 'en_US.UTF-8' TEMPLATE template0;
-sudo -u postgres -- psql -d twittercannon -f twittercannon.pgsql 
-CREATE USER twittercannon WITH ENCRYPTED PASSWORD 'mypass';
-GRANT ALL PRIVILEGES ON DATABASE twittercannon TO twittercannon;
-```
-```
-npm install
-npm run build
+```bash
+sudo mkdir /mnt/custom-volume # permissions?
+docker-compose up --build -d
 npm start
 ```
 
