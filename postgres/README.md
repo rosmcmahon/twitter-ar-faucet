@@ -1,11 +1,13 @@
 ### Tear down
 
-`docker-compose down --remove-orphans`
-`sudo rm -r /mnt/<custom-dir>`
+- `docker-compose down --remove-orphans`
+- `sudo rm -r /mnt/<custom-dir>`
 
 ### Set up
 
-`docker-compose up --build`
+- fill out vars in .env
+- create a folder for the external volume
+- `docker-compose up --build`
 
 ### Manual testing
 
