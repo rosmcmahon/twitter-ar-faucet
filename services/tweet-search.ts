@@ -21,7 +21,7 @@ export const getTweetData = async (address: string): Promise<TweetDataResult>  =
     method: 'GET',
     url: 'https://api.twitter.com/1.1/search/tweets.json',
     params: {
-      q: address
+      q: '"' + address + '"' // quotes are important, searching for exact string
     },
     headers: {
       Authorization: `Bearer ${process.env.BEARER_TOKEN}`,

@@ -38,4 +38,15 @@ describe('tweet-search.ts tests', () => {
 
 	}, 20000)
 
+	it('tests search terms starting with \'-\' are handled', async () => {
+		expect.assertions(1)
+
+		const invalidSearch = '-929de249-87ce-4216-b587-3e3d53a67001' // a uuid
+
+		const result = await getTweetData(invalidSearch)
+
+		expect(result.value).toBeFalsy()
+
+	}, 20000)
+
 })
