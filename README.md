@@ -23,7 +23,6 @@ That's all ;-)
 
 
 <!-- 
-sudo -u postgres -- psql -c 'create database `<DB_USER>`'
-sudo -u postgres -- psql -d targetdb -f sourcedb.sql
-psql -f /some/path/my_script_name.sql — The -f option will instruct psql to execute the file. This is arguably the most critical of all the options.
+npx next telemetry disable
+pm2 start npm --name "tcannon" -- run "start"
 -->
