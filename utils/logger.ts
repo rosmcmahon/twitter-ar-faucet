@@ -1,4 +1,5 @@
 import col from 'ansi-colors'
+import { EOL } from 'os'
 // import fs from 'fs'
 let fs: any
 if(typeof window === 'undefined'){ fs = require('fs') }
@@ -18,7 +19,7 @@ export const logger = (...args: any[]) => {
 			console.log(col.magenta(prefix), ...args)
 			fs.appendFile(
 				'server-logs.log', 
-				new Date().toUTCString() + '\t' + args.join(' '),
+				new Date().toUTCString() + '\t' + args.join(' ') + EOL,
 				()=>{}
 			)
 		}else{
