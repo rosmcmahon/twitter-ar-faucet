@@ -42,7 +42,7 @@ const DownloadStep = ({ jwk, address, onClickNext }: IProps): ReactElement => {
 						}} 
 					/>
 					<span className='checkmark'/>
-					I understand that one can help me recover this if I lose it.
+					I understand that one can help me recover this if I lose it
 				</label>
 			</form>
 
