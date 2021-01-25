@@ -19,7 +19,7 @@ export const logger = (...args: any[]) => {
 			console.log(col.magenta(prefix), ...args)
 			fs.appendFile(
 				'server-logs.log', 
-				new Date().toUTCString() + '\t' + prefix + args.join(' ') + EOL,
+				new Date().toUTCString() + '\t' + prefix + ' ' + args.join(' ') + EOL,
 				()=>{}
 			)
 		}else{
