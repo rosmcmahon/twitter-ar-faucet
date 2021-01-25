@@ -18,6 +18,9 @@ package-lock.json
 
 # production
 /build
+/greenlock-manager
+/greenlock.d
+.greenlockrc
 
 # misc
 .DS_Store

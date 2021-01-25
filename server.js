@@ -1,31 +1,56 @@
+const greenlock = require('greenlock-express')
+const path = require('path')
+
+// server.js
 const http = require('http')
 const https = require('https')
-const fs = require('fs')
 const { parse } = require('url')
+const redirectHttps = require('redirect-https')
 const next = require('next')
 
-const httpsOptions = {
-	key: fs.readFileSync('/etc/letsencrypt/live/arweavewallet.com/privkey.pem'),
-	cert: fs.readFileSync('/etc/letsencrypt/live/arweavewallet.com/fullchain.pem')
+const port = 3210
+const dev = process.env.NODE_ENV !== 'production'
+const nextApp = next({ dev })
+const nextHandler = nextApp.getRequestHandler()
+
+greenlock
+	.init({
+		packageRoot: __dirname,
+		configDir: './greenlock-manager',
+		maintainerEmail: 'ros@arweave.org',
+		cluster: false,
+	})
+	.ready(httpsWorker)
+
+function httpsWorker(glx) {
+	nextApp.prepare().then(() => {
+		if(dev){
+			let httpServer = glx.httpServer((req, res) => {
+				const parsedUrl = parse(req.url, true)
+				nextHandler(req, res, parsedUrl)
+			});
+			httpServer.listen(3000, "0.0.0.0", function() {
+					console.info("Dev mode. Listening on ", httpServer.address());
+			});
+		} else {
+
+			// Note: You must ALSO listen on port 80 for ACME HTTP-01 Challenges
+			// (the ACME and http->https middleware are loaded by glx.httpServer)
+			let httpServer = glx.httpServer();
+			httpServer.listen(80, "0.0.0.0", function() {
+					console.info("Listening on ", httpServer.address(), " but redirecting to https");
+			});
+			// Get the raw https server:
+			let httpsServer = glx.httpsServer(null, (req, res) => {
+				const parsedUrl = parse(req.url, true)
+				nextHandler(req, res, parsedUrl)
+			});
+
+			httpsServer.listen(443, "0.0.0.0", function() {
+					console.info("Listening on ", httpsServer.address());
+			});
+		}
+	})
 }
 
-const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev })
-const nextHandler = app.getRequestHandler()
 
-
-app.prepare().then(() => {
-	// let httpServer = http.createServer((req, res)=>{
-	// 	res.
-	// })
-	// httpServer.listen(80, () => console.log('Ready on http://localhost:80'))
-
-	let httpsServer = https.createServer(httpsOptions, (req, res) => {
-    const parsedUrl = parse(req.url, true);
-    nextHandler(req, res, parsedUrl);
-  })
-	httpsServer.listen(443, (err) => {
-		if(err) throw err;
-		console.log('Ready on https://localhost:443')
-	})
-})
