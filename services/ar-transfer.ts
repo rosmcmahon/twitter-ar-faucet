@@ -17,12 +17,12 @@ export const transferAr = async (address: string) => {
 	/* TODO: implenent a whole retry post tx scenario */
 	/* We did the above and created a library for it as it became such an issue */
 
-	// try {
-	// 	const txid = await uploadTx(tx, jwk)
-	// 	logger(address, 'AR transfer success. txid:', txid)
-	// } catch (e) {
-	// 	logger(address, e.name, ':', e.message)
-	// 	console.log(e)
-	// }
-	console.log('DO AR TRANSFER HERE!')
+	try {
+		const txid = await uploadTx(tx, jwk)
+		logger(address, 'AR transfer success. txid:', txid)
+	} catch (e) {
+		logger(address, e.name, ':', e.message)
+		console.log(e)
+	}
+	
 }
