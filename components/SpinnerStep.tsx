@@ -17,14 +17,14 @@ const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
 	const theme = useTheme()
 	const [statusMessage, setStatusMessage] = useState('Searching for Twitter post...')
 
-	const waitTime = useRef(0)
-	const nextTime = useRef(0)
+	const waitTime = useRef(5)
+	const nextTime = useRef(5)
 	const [isProcessing, setIsProcessing] = useState(true)
 	const [success, setSuccess] = useState(false)
 
 	// useEffect, run once 
 	useEffect(() => {
-		waitTime.current = seconds
+		waitTime.current = seconds + 7
 	}, [])
 
 	/* Spinner component useEffect timer. No external state inputs */
@@ -52,11 +52,11 @@ const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
 						setProcessed(true)
 						logger('spinner', 'processed', data)
 						if(data.alreadyClaimed){
-							setStatusMessage('You have already attempted a claim '+ data.handle)
+							setStatusMessage('You have already attempted a claim '+ data.handle + '.')
 							break;
 						}
 						if(!data.approved){
-							setStatusMessage('Beep boop! We do not serve bots '+ data.handle)
+							setStatusMessage('Beep boop! We do not serve bots '+ data.handle + '.')
 							break;
 						}
 						setStatusMessage('Welcome ' + data.handle + '!')
@@ -67,7 +67,7 @@ const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
 					if(tries === 0){
 						setIsProcessing(false)
 						setProcessed(true)
-						setStatusMessage('Sorry. No new tweet found on Twitter')
+						setStatusMessage('Sorry. No new tweet found on Twitter.')
 						break;
 					}
 
@@ -108,9 +108,15 @@ const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
 			<br/>
 			{isProcessing &&
 				<>
-					{/* <b>{seconds}/{waitTime.current}</b> */}
-					<LinearProgress variant='determinate' value={(seconds/waitTime.current)*100}/>
-					<p>Please wait another {Number(nextTime.current/1000).toFixed(0)} seconds</p>
+					<b>{seconds}/{waitTime.current}</b>
+					{ (seconds/(waitTime.current)) <=1 ?
+						<LinearProgress variant='determinate' value={((seconds-1)/waitTime.current)*100}/>
+						:
+						<LinearProgress variant='determinate' value={50}/>
+					}
+					{ (nextTime.current/1000) > 1 && 
+						<p>Please wait another {Number(nextTime.current/1000).toFixed(0)} seconds</p>
+					}
 				</>
 			}
 			{ success &&

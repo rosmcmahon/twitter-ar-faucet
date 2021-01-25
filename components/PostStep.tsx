@@ -26,11 +26,11 @@ const PostStep = ({address, onClickNext}: IProps) => {
 
 	return (
 		<>
-			<h1>Post the tweet </h1>
+			<h1>Post the tweet.</h1>
 			<Typography variant='body1'>
 				<ol>
-					<li>Post the tweet using your personal Twitter account</li>
-					<li>Click 'Next' once complete</li>
+					<li>Post the tweet using your personal Twitter account.</li>
+					<li>Click 'Next' once complete.</li>
 				</ol>
 	
 				<button className='btn' onClick={onClickTweet}>Open Tweet Pop-Up</button>
