@@ -1,7 +1,4 @@
-import { Button, Checkbox, Container, FormControlLabel, Paper, Typography } from '@material-ui/core'
 import React, { useState } from 'react'
-import PostStep from '../components/PostStep'
-import Footer from '../components/Footer'
 
 const IndexPage = () => {
   const [ready, setReady] = useState(false)
@@ -20,9 +17,9 @@ const IndexPage = () => {
                 <br/>
                 Instructions:
                 <ol>
-                  <li>Click the "CLAIM" button to open a Twitter popup</li>
-                  <li>Post the Tweet using your Twitter account</li>
-                  <li>Click next once done</li>
+                  <li>Download &amp; save your new wallet (.JSON key file). You only have 1 chance to do this</li>
+                  <li>Post the tweet using your Twitter account</li>
+                  <li>Hit 'Next' once done</li>
                 </ol>
 
                 <form noValidate={true}>
@@ -37,7 +34,7 @@ const IndexPage = () => {
                       onChange={()=>setReady(!ready)} 
                     />
                     <span className='checkmark'/>
-                    I am ready to post a pre-written Tweet
+                    I am ready to follow the above instructions
                   </label>
                   <div style={{display: 'flex', flexDirection: 'column', 
                     alignItems: 'center'}}>
@@ -47,7 +44,7 @@ const IndexPage = () => {
                     type='button'
                     onClick={()=>window.location.href='/steps'} 
                   >
-                    Post Tweet
+                    Continue
                   </button>
                   </div>
                 </form>

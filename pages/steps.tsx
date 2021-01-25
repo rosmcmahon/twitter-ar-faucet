@@ -48,19 +48,19 @@ const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getSe
     <>
 			<Stepper activeStep={activeStep} orientation='vertical' style={{marginBottom: theme.spacing(2)}}>
         <Step key={'download step'}>
-          <StepLabel>Download Your New Wallet!</StepLabel>
+          <StepLabel>Download your new wallet!</StepLabel>
 					<StepContent>
 						<DownloadStep address={address} jwk={jwk} onClickNext={onClickNext}/>
 					</StepContent>
 				</Step>
 				<Step key={'post step'}>
-          <StepLabel>Post the Tweet</StepLabel>
+          <StepLabel>Post the tweet</StepLabel>
 					<StepContent>
 						<PostStep address={address} onClickNext={onClickNext}/>
 					</StepContent>
 				</Step>
 				<Step key={'spinner step'}>
-          <StepLabel>Await Tweet Processing</StepLabel>
+          <StepLabel>Await tweet processing</StepLabel>
 					<StepContent>
             <SpinnerStep 
               address={address} 

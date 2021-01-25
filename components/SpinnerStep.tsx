@@ -116,7 +116,7 @@ const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
 			{ success &&
 				<>
 					{/* <LinearProgress variant='determinate' value={100} color='secondary' /> */}
-					<h2>All steps completed - Let's see what your wallet can do!</h2>
+					<h2>All steps completed - let's see what your wallet can do!</h2>
 					<div style={{display: 'flex', flexDirection: 'column', 
                     alignItems: 'center'}}>
 						<button 

@@ -40,16 +40,18 @@ const Footer = () => {
 						</div>
 					</div>
 					<div className="footer__content__company">
+						<p>Problems? <a href="mailto:team@arweave.org">team@arweave.org</a></p>
 						<hr/>
 						<p>©
-							Copyright 2020. Minimum Spanning Technologies Limited (10889544).
+							Copyright 2021. Minimum Spanning Technologies Limited (10889544).
 							International House, 24 Holborn Viaduct, London, EC1A 2BN, United
 							Kingdom.</p>
 					</div>
 				</div>
 				<div className="footer__content__mobile">
+					<p>Problems? <a href="mailto:team@arweave.org">team@arweave.org</a></p>
 					<hr/>
-					<p>© Copyrights 2020 Minimum Spanning Technologies Limited</p>
+					<p>© Copyrights 2021 Minimum Spanning Technologies Limited</p>
 				</div>
 			</div>
 		</footer>

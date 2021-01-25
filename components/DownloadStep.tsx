@@ -19,10 +19,10 @@ const DownloadStep = ({ jwk, address, onClickNext }: IProps): ReactElement => {
 
 	return (
 		<>
-			<h1>Download your key file</h1>
+			<h1>Download &amp; save your wallet key file</h1>
 
 			<p>
-				Nobody (including the arweave project) can help you recover your wallet if the key file is lost.
+				Nobody (including the Arweave project) can help you recover your wallet if the key file is lost.
 			</p>
 			<p>So, remember to keep it safe!</p>
 			<br/>
@@ -42,7 +42,7 @@ const DownloadStep = ({ jwk, address, onClickNext }: IProps): ReactElement => {
 						}} 
 					/>
 					<span className='checkmark'/>
-					No one can help me recover this if I lose it
+					I understand that one can help me recover this if I lose it
 				</label>
 			</form>
 

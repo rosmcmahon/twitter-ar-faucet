@@ -19,7 +19,7 @@ const twit = new Twitter({
 export const sendTwitterReply = async (tweetId: string, twitterHandle: string) => {
 	logger(twitterHandle, tweetId, 'sending reply now...')
 
-	let status = `Thanks @${twitterHandle}! Your tokens will be transferred shortly... :-)`
+	let status = `Your Arweave tokens will be transferred shortly... :-)`
 
 	let tweet = await twit.post('statuses/update', {
 		status,

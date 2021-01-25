@@ -8,7 +8,6 @@ const { parse } = require('url')
 const redirectHttps = require('redirect-https')
 const next = require('next')
 
-const port = 3210
 const dev = process.env.NODE_ENV !== 'production'
 const nextApp = next({ dev })
 const nextHandler = nextApp.getRequestHandler()
@@ -29,8 +28,8 @@ function httpsWorker(glx) {
 				const parsedUrl = parse(req.url, true)
 				nextHandler(req, res, parsedUrl)
 			});
-			httpServer.listen(3000, "0.0.0.0", function() {
-					console.info("Dev mode. Listening on ", httpServer.address());
+			httpServer.listen(3210, "0.0.0.0", function() {
+					console.info("Dev mode. Listening on ", httpServer.address(), 'http://localhost:3210');
 			});
 		} else {
 
