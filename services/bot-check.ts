@@ -45,7 +45,7 @@ export const botCheck = async (twitterHandle: string): Promise<IsBotReturn> => {
 
 	/* Check the botometer score (0-5), this uses > 1 is a bot */
 
-	if(display_score > 2.5){
+	if(display_score > 3.5){
 		return {
 			passed: false,
 			reason: 'failed botometer ' + display_score,
