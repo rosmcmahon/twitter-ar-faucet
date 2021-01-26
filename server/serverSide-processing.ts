@@ -4,7 +4,7 @@ import { registerUser } from "../services/db-insert-user"
 import { transferAr } from "../services/ar-transfer"
 import { getTweetDataWithRetry } from "../services/tweet-search"
 import { logger } from "../utils/logger"
-import { sendTwitterReply } from "../services/twitter-reply"
+import { sendFailTweetReply, sendSuccessTweetReply } from "../services/twitter-reply"
 
 
 export const serverSideClaimProcessing = async (address: string) => {
@@ -56,9 +56,10 @@ export const serverSideClaimProcessing = async (address: string) => {
 	/* Transfer AR to the new wallet */
 
 	if(botResult.passed){
-		await sendTwitterReply(tweetResult.tweetId!, handle)
+		await sendSuccessTweetReply(tweetResult.tweetId!, handle)
 		await transferAr(address)
 	} else{
+		await sendFailTweetReply(tweetResult.tweetId!, handle)
 		logger(handle, 'no AR transfer for this bot')
 	}
 

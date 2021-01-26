@@ -16,7 +16,7 @@ const twit = new Twitter({
 })
 
 
-export const sendTwitterReply = async (tweetId: string, twitterHandle: string) => {
+export const sendSuccessTweetReply = async (tweetId: string, twitterHandle: string) => {
 	logger(twitterHandle, tweetId, 'sending reply now...')
 
 	let status = `Your Arweave tokens will be transferred shortly... :-)`
@@ -28,7 +28,26 @@ export const sendTwitterReply = async (tweetId: string, twitterHandle: string) =
 	})
 
 	if(tweet.in_reply_to_status_id_str === tweetId){
-		logger(twitterHandle, 'successfully replied to tweet')
+		logger(twitterHandle, 'success tweet reply sent')
+		return true
+	}
+	logger(twitterHandle, 'ERROR, Failed in reply to tweet')
+	return false
+}
+
+export const sendFailTweetReply = async (tweetId: string, twitterHandle: string) => {
+	logger(twitterHandle, tweetId, 'sending reply now...')
+
+	let status = '🤖 Bleep blorp. We can\'t be 100% sure you are human automatically! Hang tight and we will send some of our humans to check!'
+
+	let tweet = await twit.post('statuses/update', {
+		status,
+		in_reply_to_status_id: tweetId,
+		auto_populate_reply_metadata: true,
+	})
+
+	if(tweet.in_reply_to_status_id_str === tweetId){
+		logger(twitterHandle, 'fail tweet reply sent')
 		return true
 	}
 	logger(twitterHandle, 'ERROR, Failed in reply to tweet')
