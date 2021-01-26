@@ -108,7 +108,7 @@ const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
 			<br/>
 			{isProcessing &&
 				<>
-					<b>{seconds}/{waitTime.current}</b>
+					{/* <b>{seconds}/{waitTime.current}</b> */}
 					{ (seconds/(waitTime.current)) <=1 ?
 						<LinearProgress variant='determinate' value={((seconds-1)/waitTime.current)*100}/>
 						:
