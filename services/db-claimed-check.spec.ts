@@ -1,6 +1,6 @@
 import next from "next"
 const nextApp = next({ dev: true })
-import { accountClaimed, isProcessed } from './db-claimed-check'
+import { accountClaimed } from './db-claimed-check'
 
 describe('claimed-check tests', () => {
 
@@ -10,24 +10,24 @@ describe('claimed-check tests', () => {
 		expect(process.env.DB_PWD).toBeDefined()
 	})
 
-	it('tests that isProcessed finds correct record', async () => {
-		expect.assertions(2)
-		const result = await isProcessed(
-			'mr_robot-address123412345678901234567890123'
-		)
-		expect(result.exists).toBeTruthy()
-		expect(result.approved).toBeFalsy()
-	})
+	// it('tests that isProcessed finds correct record', async () => {
+	// 	expect.assertions(2)
+	// 	const result = await isProcessed(
+	// 		'mr_robot-address123412345678901234567890123'
+	// 	)
+	// 	expect(result.exists).toBeTruthy()
+	// 	expect(result.approved).toBeFalsy()
+	// })
 
-	it('tests that isProcessed returns record not found', async () => {
-		expect.assertions(1)
-		const result = await isProcessed('nonexistent-address')
-		expect(result.exists).toBeFalsy()
-	})
+	// it('tests that isProcessed returns record not found', async () => {
+	// 	expect.assertions(1)
+	// 	const result = await isProcessed('nonexistent-address')
+	// 	expect(result.exists).toBeFalsy()
+	// })
 
 	it('tests that handleUsed finds correct record', async () => {
 		expect.assertions(2)
-		const result = await accountClaimed('Mr_Robot')
+		const result = await accountClaimed('2')//'Mr_Robot'
 		expect(result.exists).toBeTruthy()
 		expect(result.approved).toBeFalsy()
 	})
