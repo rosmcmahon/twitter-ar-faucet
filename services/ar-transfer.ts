@@ -10,7 +10,7 @@ export const transferAr = async (address: string) => {
 	logger(address, 'WALLET_GEN_FEE', fee,'winston', arweave.ar.winstonToAr(fee), 'AR')
 	let tx = await arweave.createTransaction({
 		target: address,
-		quantity: arweave.ar.arToWinston("1.0"),
+		quantity: arweave.ar.arToWinston("0.1"),
 	}, jwk)
 	tx.addTag('App-Name', 'twitter-cannon')
 
