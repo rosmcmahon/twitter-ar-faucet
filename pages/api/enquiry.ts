@@ -47,7 +47,7 @@ export default async (
 
 		const accountOrWait = await getTweetHandleOrWaitTime(address)
 
-		logger('API1', accountOrWait)
+		logger('API1', JSON.stringify(accountOrWait))
 
 		if(accountOrWait.value === false){
 			return response.status(200).json({
@@ -62,7 +62,7 @@ export default async (
 
 		const checkAccountId = await checkAccountClaim(accountOrWait.twitterId!, address)
 		
-		logger('API2', checkAccountId)
+		logger('API2', JSON.stringify(checkAccountId))
 
 		if(checkAccountId.exists){
 			return response.status(200).json({
