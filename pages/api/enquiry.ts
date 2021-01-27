@@ -6,15 +6,15 @@ import { logger } from '../../utils/logger'
 import rateLimit from 'express-rate-limit'
 
 const apiLimiter = rateLimit({
-	windowMs: 24* 60 * 60 * 1000,
+	windowMs: 15 * 60 * 1000,
 	max: 18,
-	message: "Too many requests from your IP.",
+	message: "Sorry, you have made too many requests. Please check Twitter for a reply to your first claim.",
 	headers: false,
 })
 
 // Helper method to wait for a middleware to execute before continuing
 // And to throw an error when an error happens in a middleware
-function runMiddleware(req: any, res: any, fn: any) {
+function runMiddleware(req: NextApiRequest, res: any, fn: any) {
   return new Promise((resolve, reject) => {
     fn(req, res, (result: any) => {
       if (result instanceof Error) {
