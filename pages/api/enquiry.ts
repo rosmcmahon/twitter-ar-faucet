@@ -34,9 +34,9 @@ export default async (
 	const { address } = request.query
 
 	//TODO: blacklist/rate-limit IPs
-	logger('API0', request.socket.remoteAddress)
+	logger(address, 'API0', 'rate-limit canary on', request.socket.remoteAddress)
 	await runMiddleware(request, response, apiLimiter)
-
+	logger(address, 'API0', 'rate-limit canary off')
 
 	try {
 		if(!address || typeof address !== 'string' || address.length !== 43){
@@ -47,7 +47,7 @@ export default async (
 
 		const accountOrWait = await getTweetHandleOrWaitTime(address)
 
-		logger('API1', JSON.stringify(accountOrWait))
+		logger(address, 'API1', JSON.stringify(accountOrWait))
 
 		if(accountOrWait.value === false){
 			return response.status(200).json({
@@ -62,7 +62,7 @@ export default async (
 
 		const checkAccountId = await checkAccountClaim(accountOrWait.twitterId!, address)
 		
-		logger('API2', JSON.stringify(checkAccountId))
+		logger(address, 'API2', JSON.stringify(checkAccountId))
 
 		if(checkAccountId.exists){
 			return response.status(200).json({
