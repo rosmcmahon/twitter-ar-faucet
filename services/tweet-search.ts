@@ -1,5 +1,6 @@
 import Axios from "axios"
 import { logger } from "../utils/logger"
+import { currentTwitterReset, getRateLimitWait } from "../utils/ratelimit-singletons"
 
 const sleep = async (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))
 
@@ -61,11 +62,10 @@ export const getTweetDataWithRetry = async (address: string ): Promise<TweetSear
 
   let sleepMs = 5000 //(sleepMs*2 <= 315000) // 6 tries over 5'15s
   let tries = 6
-  let rateLimitWait = 0
   
 	while(tries--){
     
-    let waitTime = sleepMs + rateLimitWait
+    let waitTime = sleepMs + getRateLimitWait()
 		logger(address, 'server waiting another', waitTime, 'ms...')
     await sleep(waitTime) 
 
@@ -77,14 +77,13 @@ export const getTweetDataWithRetry = async (address: string ): Promise<TweetSear
       }
 
       // Adjust sleep timers for the next attempt
-      rateLimitWait = 0
       sleepMs *= 2
 		} catch(err) {
       const res = err.response
       
 			if(res.status === 429){
-				rateLimitWait = new Date(Number(res.headers['x-rate-limit-reset'])*1000).valueOf() - new Date().valueOf()
-        logger(address,'**(Server: Twitter RateLimit applied)**', res.status, res.statusText, 'added ' + rateLimitWait + 'ms extra')
+        currentTwitterReset( Number(res.headers['x-rate-limit-reset']) )
+        logger(address,'**(Server: Twitter RateLimit applied)**', res.status, res.statusText, 'added ' + getRateLimitWait() + 'ms extra')
         
 			} else{
 				throw err

@@ -1,7 +1,14 @@
-import React, { useState } from 'react'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import React, { ReactElement, useState } from 'react'
+import TwitterLimit from '../components/TwitterLimit'
+import { logger } from '../utils/logger'
+import { getRateLimitWait } from '../utils/ratelimit-singletons'
 
-const IndexPage = () => {
+const IndexPage = ({ rateLimit }: InferGetServerSidePropsType<typeof getServerSideProps>): ReactElement => {
   const [ready, setReady] = useState(false)
+  if(rateLimit){
+    return <TwitterLimit/>
+  }
   return (
     <>
           <section className="card-link-section">
@@ -63,5 +70,17 @@ const IndexPage = () => {
     </>
   )
 }
-
 export default IndexPage
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  logger(context.req.socket.remoteAddress, 'index page load', new Date().toUTCString())
+
+  const rateLimit = (getRateLimitWait() > 0)
+
+  return{
+    props: {
+      rateLimit,
+    }
+  }
+}

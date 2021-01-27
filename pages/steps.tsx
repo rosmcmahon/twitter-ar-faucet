@@ -34,9 +34,6 @@ const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getSe
   }, [seconds])
   
   
-  
-  useEffect(() => logger('UI address', address), [])
-  
 	const onClickNext = () => setActiveStep(step => step + 1)
 
   if(timesUp){
@@ -82,7 +79,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const jwk = await arweave.wallets.generate()
   const address = await arweave.wallets.jwkToAddress(jwk)
   
-  logger(address, 'NEW PAGE LOAD', new Date().toUTCString())
+  logger(address, 'STEPS PAGE LOAD', new Date().toUTCString())
 
   /* IP Blacklist Code */
 
