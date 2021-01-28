@@ -21,7 +21,7 @@ describe('tweet-search.ts tests', () => {
 		const result = await getTweetData(address)
 
 		expect(result.value).toEqual(true)
-		expect(result.handle).toEqual('RodSchuffler')
+		expect(result.handle).toEqual('Robotpusher')
 		expect(result.twitterId).toEqual('1324287567991328768')
 		expect(result.tweetId).toEqual('1351967174697562121')
 

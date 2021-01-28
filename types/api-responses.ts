@@ -3,7 +3,6 @@ export type EnquiryData = {
 	approved: boolean
 	rateLimitWait: number
 	alreadyClaimed: boolean
-	handle?: string
 
 } //| { error: string }
 

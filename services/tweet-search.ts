@@ -106,6 +106,7 @@ export const getTweetHandleOrWaitTime = async (address: string): Promise<TweetSe
     const res = e.response
     if(res.status === 429){
       let rateLimitReset = Number( res.headers['x-rate-limit-reset'] )
+      currentTwitterReset( rateLimitReset )
       logger(address,'**(API: Twitter RateLimit applied)**', res.status, res.statusText, rateLimitReset) 
       return {
         value: false,

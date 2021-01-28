@@ -29,9 +29,9 @@ describe('bot-check test', () => {
 		expect(result.passed).toBeFalsy()
 	})
 
-	it('tests known bot @RodSchuffler is a bot', async () => {
+	it('tests known bot @Robotpusher is a bot', async () => {
 		expect.assertions(1)
-		const result = await botCheck('RodSchuffler')
+		const result = await botCheck('Robotpusher')
 		expect(result.passed).toBeFalsy()
 	})
 

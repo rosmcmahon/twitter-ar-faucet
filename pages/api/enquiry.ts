@@ -4,6 +4,7 @@ import { getTweetHandleOrWaitTime } from '../../services/tweet-search'
 import { EnquiryData } from '../../types/api-responses'
 import { logger } from '../../utils/logger'
 import rateLimit from 'express-rate-limit'
+import { getRateLimitWait } from '../../utils/ratelimit-singletons'
 
 const apiLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000,
@@ -13,7 +14,6 @@ const apiLimiter = rateLimit({
 })
 
 // Helper method to wait for a middleware to execute before continuing
-// And to throw an error when an error happens in a middleware
 function runMiddleware(req: NextApiRequest, res: any, fn: any) {
   return new Promise((resolve, reject) => {
     fn(req, res, (result: any) => {
@@ -43,22 +43,34 @@ export default async (
 			return response.status(400).json({ error: 'invalid parameter' })
 		}
 
-		/* Step 1. Check the tweet has been posted & get the twitter handle */
+		/* Step 1. Check for rate-limiting */
 
+		const rateLimit = getRateLimitWait()
+
+		if(rateLimit > 0){
+
+			logger(address,'**(API: Twitter RateLimit applied)**', rateLimit + ' ms')
+			
+			return response.status(200).json({
+				processed: false,
+				approved: false,
+				rateLimitWait: rateLimit, // caller handle rate-limiting
+				alreadyClaimed: false,
+			})
+		}
+
+		/* Step 2. Check the address against the DB and return the results */
+		
 		const accountOrWait = await getTweetHandleOrWaitTime(address)
-
-		logger(address, 'API1', JSON.stringify(accountOrWait))
 
 		if(accountOrWait.value === false){
 			return response.status(200).json({
 				processed: false,
 				approved: false,
-				rateLimitWait: accountOrWait.rateLimitReset, // handle rate-limiting
+				rateLimitWait: rateLimit,
 				alreadyClaimed: false,
 			})
 		}
-
-		/* Step 2. Check the handle against the DB and return the results */
 
 		const checkAccountId = await checkAccountClaim(accountOrWait.twitterId!, address)
 		
@@ -70,7 +82,6 @@ export default async (
 				approved: checkAccountId.approved,
 				rateLimitWait: 0,
 				alreadyClaimed: checkAccountId.alreadyClaimed,
-				handle: accountOrWait.handle!,
 			})
 		} else {
 			return response.status(200).json({

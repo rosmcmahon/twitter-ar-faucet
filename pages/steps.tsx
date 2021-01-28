@@ -8,10 +8,12 @@ import DownloadStep from '../components/DownloadStep'
 import { serverSideClaimProcessing } from '../server/serverSide-processing'
 import { logger } from '../utils/logger'
 import OutOfTime from '../components/OutOfTime'
+import { getRateLimitWait } from '../utils/ratelimit-singletons'
+import TwitterLimit from '../components/TwitterLimit'
 
 const arweave = Arweave.init({ host: 'arweave.net' })
 
-const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getServerSideProps>): ReactElement => {
+const ClaimStepper = ({ jwk, address, rateLimited }: InferGetServerSidePropsType<typeof getServerSideProps>): ReactElement => {
 
   const theme = useTheme()
   const [activeStep, setActiveStep] = useState(0)
@@ -36,6 +38,9 @@ const ClaimStepper = ({ jwk, address }: InferGetServerSidePropsType<typeof getSe
   
 	const onClickNext = () => setActiveStep(step => step + 1)
 
+  if(rateLimited && activeStep < 1){
+    return <TwitterLimit/>
+  }
   if(timesUp){
     return <OutOfTime/>
   }
@@ -78,6 +83,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   
   const jwk = await arweave.wallets.generate()
   const address = await arweave.wallets.jwkToAddress(jwk)
+  const rateLimited = (getRateLimitWait() > 0)
   
   logger(address, 'STEPS PAGE LOAD', new Date().toUTCString())
 
@@ -100,6 +106,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       jwk,
       address,
+      rateLimited,
     }
   }
 }

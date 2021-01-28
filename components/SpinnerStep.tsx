@@ -22,6 +22,8 @@ const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
 	const [isProcessing, setIsProcessing] = useState(true)
 	const [success, setSuccess] = useState(false)
 
+	const [rateLimited, setRateLimited] = useState(false)
+
 	// useEffect, run once 
 	useEffect(() => {
 		waitTime.current = seconds + 7
@@ -52,14 +54,14 @@ const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
 						setProcessed(true)
 						logger('spinner', 'processed', data)
 						if(data.alreadyClaimed){
-							setStatusMessage('You have already attempted a claim '+ data.handle + '.')
+							setStatusMessage('You have already attempted a claim.')
 							break;
 						}
 						if(!data.approved){
-							setStatusMessage('Beep boop! We do not serve bots '+ data.handle + '.')
+							setStatusMessage('Beep boop! We do not serve bots. 🤖')
 							break;
 						}
-						setStatusMessage('Welcome ' + data.handle + '!')
+						setStatusMessage('Welcome to the permaweb!')
 						setSuccess(true)
 						break;
 					} 
@@ -74,7 +76,13 @@ const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
 					/* adjust wait timer */
 					
 					let wait = sleepMs + data.rateLimitWait
-					//TODO: if rate-limit (waitTime) is set, give a "server busy" warning
+
+					// if rate-limit (waitTime) is set, give a "server busy" warnings
+					if(data.rateLimitWait > 0){
+						setProcessed(true) // prevent steps OutOfTime 5 minute timeout
+						setRateLimited(true)	
+					}
+
 					logger('spinner', address, 'waiting another', wait, 'ms...')
 					setStatusMessage('Retrieving tweet data & processing...')
 
@@ -104,11 +112,16 @@ const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
 
 	return (
 		<>
+			{ (rateLimited && isProcessing) && 
+				<>
+					<h1>We are experiencing an unusually high demand for tokens! 🤖</h1>
+					<h2>Your claim may take an extra 20 minutes to process. You can also check Twitter for a reply later.</h2>
+				</>
+			}	
 			<h1>{statusMessage}</h1>
 			<br/>
 			{isProcessing &&
-				<>
-					{/* <b>{seconds}/{waitTime.current}</b> */}
+				<>			
 					{ (seconds/(waitTime.current)) <=1 ?
 						<LinearProgress variant='determinate' value={((seconds-1)/waitTime.current)*100}/>
 						:
