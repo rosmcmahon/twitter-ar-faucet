@@ -28,7 +28,7 @@ export const sendSuccessTweetReply = async (tweetId: string, twitterHandle: stri
 	})
 
 	if(tweet.in_reply_to_status_id_str === tweetId){
-		logger(twitterHandle, 'success tweet reply sent')
+		logger(twitterHandle, 'success tweet reply sent', tweet.id_str)
 		return true
 	}
 	logger(twitterHandle, 'ERROR, Failed in reply to tweet')
@@ -47,7 +47,7 @@ export const sendFailTweetReply = async (tweetId: string, twitterHandle: string)
 	})
 
 	if(tweet.in_reply_to_status_id_str === tweetId){
-		logger(twitterHandle, 'fail tweet reply sent')
+		logger(twitterHandle, 'fail tweet reply sent', tweet.id_str)
 		return true
 	}
 	logger(twitterHandle, 'ERROR, Failed in reply to tweet')
