@@ -10,6 +10,7 @@ import { logger } from '../utils/logger'
 import OutOfTime from '../components/OutOfTime'
 import { getRateLimitWait } from '../utils/ratelimit-singletons'
 import TwitterLimit from '../components/TwitterLimit'
+import { checkIP } from '../utils/fifo-ip'
 
 const arweave = Arweave.init({ host: 'arweave.net' })
 
@@ -79,24 +80,23 @@ const ClaimStepper = ({ jwk, address, rateLimited }: InferGetServerSidePropsType
 }
 export default ClaimStepper
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
   
   const jwk = await arweave.wallets.generate()
   const address = await arweave.wallets.jwkToAddress(jwk)
   const rateLimited = (getRateLimitWait() > 0)
   
-  logger(context.req.socket.remoteAddress, 'STEPS PAGE LOAD', address, new Date().toUTCString())
+  const ip = req.socket.remoteAddress
+  logger(ip, 'STEPS PAGE LOAD', address, new Date().toUTCString())
 
-  /* IP Blacklist Code */
+  if(ip && !checkIP(ip)){
+    logger(ip, 'REDIRECTING to index page')
+    res.statusCode = 302
+    res.setHeader('Location', '/')
+    res.end()
+    return { props: {} };
+  }
 
-  //get incoming IP address
-  // console.log('connection', context.req.connection.remoteAddress) //https only
-  // logger(address, 'remoteAddress', context.req.socket.remoteAddress)
-  /** TODO: 
-   * - check against blacklist here. 
-   * - keep list in db. 
-   * - how do we quantify abuse?
-   */
   
   /* Set off the server loop asynchronously */
 

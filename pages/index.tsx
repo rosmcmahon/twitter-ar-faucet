@@ -1,6 +1,7 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import React, { ReactElement, useState } from 'react'
 import TwitterLimit from '../components/TwitterLimit'
+import { storeIP } from '../utils/fifo-ip'
 import { logger } from '../utils/logger'
 import { getRateLimitWait } from '../utils/ratelimit-singletons'
 
@@ -74,7 +75,10 @@ export default IndexPage
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
-  logger(context.req.socket.remoteAddress, 'index page load', new Date().toUTCString())
+  const ip = context.req.socket.remoteAddress
+  logger(ip, 'index page load', new Date().toUTCString())
+
+  ip && storeIP(ip)
 
   const rateLimit = (getRateLimitWait() > 0)
 
