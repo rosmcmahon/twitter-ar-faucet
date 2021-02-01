@@ -1,8 +1,8 @@
 /**
  * -= Notes =-
- * Twitter Direct Message Rate Limiting
- * Requests / 24-hour window:  15000 per app
- * 
+ * Twitter Rate Limiting
+ * There is a 300 requests per three hours shared App-level rate limit for the POST 
+ * statuses/update (post a Tweet) and POST statuses/retweet/:id (post a Retweet) endpoints.
  */
 
 import { logger } from '../utils/logger'
