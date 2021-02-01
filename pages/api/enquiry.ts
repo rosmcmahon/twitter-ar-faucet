@@ -3,10 +3,10 @@ import { checkAccountClaim } from '../../services/db-claimed-check'
 import { getTweetHandleOrWaitTime } from '../../services/tweet-search'
 import { EnquiryData } from '../../types/api-responses'
 import { logger } from '../../utils/logger'
-import rateLimit from 'express-rate-limit'
+import expressRateLimit from 'express-rate-limit'
 import { getRateLimitWait } from '../../utils/ratelimit-singletons'
 
-const apiLimiter = rateLimit({
+const apiLimiter = expressRateLimit({
 	windowMs: 15 * 60 * 1000,
 	max: 18,
 	message: "Sorry, you have made too many requests. Please check Twitter for a reply to your first claim.",

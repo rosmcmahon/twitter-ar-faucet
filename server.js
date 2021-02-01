@@ -29,7 +29,7 @@ function httpsWorker(glx) {
 				nextHandler(req, res, parsedUrl)
 			});
 			httpServer.listen(3210, "0.0.0.0", function() {
-					console.info("Dev mode. Listening on ", httpServer.address(), 'http://localhost:3210');
+				console.info("Dev mode. Listening on ", httpServer.address(), 'http://localhost:3210');
 			});
 		} else {
 
@@ -37,7 +37,7 @@ function httpsWorker(glx) {
 			// (the ACME and http->https middleware are loaded by glx.httpServer)
 			let httpServer = glx.httpServer();
 			httpServer.listen(80, "0.0.0.0", function() {
-					console.info("Listening on ", httpServer.address(), " but redirecting to https");
+				console.info("Listening on ", httpServer.address(), " but redirecting to https");
 			});
 			// Get the raw https server:
 			let httpsServer = glx.httpsServer(null, (req, res) => {
@@ -46,7 +46,7 @@ function httpsWorker(glx) {
 			});
 
 			httpsServer.listen(443, "0.0.0.0", function() {
-					console.info("Listening on ", httpsServer.address());
+				console.info("Listening on ", httpsServer.address());
 			});
 		}
 	})
