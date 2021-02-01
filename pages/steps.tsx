@@ -85,13 +85,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const address = await arweave.wallets.jwkToAddress(jwk)
   const rateLimited = (getRateLimitWait() > 0)
   
-  logger(address, 'STEPS PAGE LOAD', new Date().toUTCString())
+  logger(context.req.socket.remoteAddress, 'STEPS PAGE LOAD', address, new Date().toUTCString())
 
   /* IP Blacklist Code */
 
   //get incoming IP address
   // console.log('connection', context.req.connection.remoteAddress) //https only
-  logger(address, 'remoteAddress', context.req.socket.remoteAddress)
+  // logger(address, 'remoteAddress', context.req.socket.remoteAddress)
   /** TODO: 
    * - check against blacklist here. 
    * - keep list in db. 
