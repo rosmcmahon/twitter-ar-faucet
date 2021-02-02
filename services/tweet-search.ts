@@ -1,4 +1,5 @@
 import Axios from "axios"
+import { getDbHeartbeat } from "../utils/db-heartbeat"
 import { logger } from "../utils/logger"
 import { currentTwitterReset, getRateLimitWait } from "../utils/ratelimit-singletons"
 
@@ -64,6 +65,11 @@ export const getTweetDataWithRetry = async (address: string ): Promise<TweetSear
   let tries = 6
   
 	while(tries--){
+    let dbHeartbeat = await getDbHeartbeat()
+    if(!dbHeartbeat){
+      logger(address, 'server detected no db-heartbeat')
+      break;
+    }
     
     let waitTime = sleepMs + getRateLimitWait()
 		logger(address, 'server waiting another', waitTime, 'ms...')

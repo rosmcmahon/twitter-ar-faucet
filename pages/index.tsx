@@ -1,12 +1,17 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import React, { ReactElement, useState } from 'react'
+import Maintenance from '../components/Maintenance'
 import TwitterLimit from '../components/TwitterLimit'
+import { getDbHeartbeat } from '../utils/db-heartbeat'
 import { storeIP } from '../utils/fifo-ip'
 import { logger } from '../utils/logger'
 import { getRateLimitWait } from '../utils/ratelimit-singletons'
 
-const IndexPage = ({ rateLimit }: InferGetServerSidePropsType<typeof getServerSideProps>): ReactElement => {
+const IndexPage = ({ dbHeartbeat, rateLimit }: InferGetServerSidePropsType<typeof getServerSideProps>): ReactElement => {
   const [ready, setReady] = useState(false)
+  if(!dbHeartbeat){
+    return <Maintenance/>
+  }
   if(rateLimit){
     return <TwitterLimit/>
   }
@@ -75,15 +80,18 @@ export default IndexPage
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
+  
   const ip = context.req.socket.remoteAddress
   logger(ip, 'index page load', new Date().toUTCString())
-
+  
   ip && storeIP(ip)
-
+  
+  const dbHeartbeat = await getDbHeartbeat()
   const rateLimit = (getRateLimitWait() > 0)
-
+  
   return{
     props: {
+      dbHeartbeat,
       rateLimit,
     }
   }

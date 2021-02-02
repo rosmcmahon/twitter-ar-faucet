@@ -3,6 +3,7 @@ import Axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
 import { EnquiryData } from '../types/api-responses'
 import { logger } from '../utils/logger'
+import { heartbeatOK } from '../components/checkHeartbeat'
 
 const sleep = async (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))
 
@@ -10,9 +11,10 @@ interface IProps {
 	address: string
 	seconds: number //ms
 	setProcessed: (b: boolean) => void
+	maintenanceOn: () => void
 }
 
-const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
+const SpinnerStep = ({address, seconds, setProcessed, maintenanceOn}: IProps) => {
 
 	const theme = useTheme()
 	const [statusMessage, setStatusMessage] = useState('Searching for Twitter post...')
@@ -37,6 +39,11 @@ const SpinnerStep = ({address, seconds, setProcessed}: IProps) => {
 		const timercode = async () => {
 			while(tries--){
 				try{
+					let heartbeat = await heartbeatOK()
+					if(!heartbeat){
+						maintenanceOn()
+						break;
+					}
 					let res = await Axios.get('/api/enquiry', {
 						params: {
 							address: address

@@ -6,3 +6,6 @@ export type EnquiryData = {
 
 } //| { error: string }
 
+export type HeartbeatData = {
+	isOk: boolean
+}

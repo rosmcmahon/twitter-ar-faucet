@@ -5,6 +5,7 @@ import { transferAr } from "../services/ar-transfer"
 import { getTweetDataWithRetry } from "../services/tweet-search"
 import { logger } from "../utils/logger"
 import { sendFailTweetReply, sendSuccessTweetReply } from "../services/twitter-reply"
+import { getDbHeartbeat } from "../utils/db-heartbeat"
 
 
 export const serverSideClaimProcessing = async (address: string) => {
@@ -32,6 +33,13 @@ export const serverSideClaimProcessing = async (address: string) => {
 	}
 
 	/* Do bot check on handle */
+
+	// quick hb check in case we're wasting calls to botometer (& twitter search)
+	let heartbeat = await getDbHeartbeat()
+	if(!heartbeat){
+		logger(address, 'server detected no db-heartbeat. exiting', new Date().toUTCString())
+		return;
+	}
 
 	const botResult = await botCheck(handle)
 	logger(address, handle, twitterId, 'bot-check passed', botResult.passed, botResult.reason, new Date().toUTCString())
