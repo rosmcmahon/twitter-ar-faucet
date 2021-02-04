@@ -1,7 +1,7 @@
 import next from "next"
 const nextApp = next({ dev: true })
 import { getTweetData } from './tweet-search'
-import { sendSuccessTweetReply } from "./twitter-reply"
+import { sendFailTweetReply, sendSuccessTweetReply } from "./twitter-reply"
 
 describe('twitter-reply.ts tests', () => {
 
@@ -13,7 +13,7 @@ describe('twitter-reply.ts tests', () => {
 	it('tests we can ad a reply to another user\'s tweet', async () => {
 		expect.assertions(1)
 
-		const result = await sendSuccessTweetReply('1351967174697562121', 'Rod')
+		const result = await sendFailTweetReply('1351967174697562121', 'Rod')
 
 		expect(result).toEqual(true)
 

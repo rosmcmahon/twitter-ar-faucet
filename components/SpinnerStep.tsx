@@ -18,6 +18,7 @@ const SpinnerStep = ({address, seconds, setProcessed, maintenanceOn}: IProps) =>
 
 	const theme = useTheme()
 	const [statusMessage, setStatusMessage] = useState('Searching for Twitter post...')
+	const [enableSubMessage, setEnableSubMessage] = useState(false)
 
 	const waitTime = useRef(5)
 	const nextTime = useRef(5)
@@ -66,7 +67,8 @@ const SpinnerStep = ({address, seconds, setProcessed, maintenanceOn}: IProps) =>
 						}
 						if(!data.approved){
 							setStatusMessage('Beep boop! We do not serve bots. 🤖')
-							break;
+							setEnableSubMessage(true)
+							break; 
 						}
 						setStatusMessage('Welcome to the permaweb!')
 						setSuccess(true)
@@ -126,6 +128,7 @@ const SpinnerStep = ({address, seconds, setProcessed, maintenanceOn}: IProps) =>
 				</>
 			}	
 			<h1>{statusMessage}</h1>
+			{enableSubMessage && <p>If you feel that this is a mistake, please email us at <a href="mailto:team@arweave.org">team@arweave.org</a></p>}
 			<br/>
 			{isProcessing &&
 				<>			

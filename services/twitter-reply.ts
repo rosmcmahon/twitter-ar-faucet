@@ -38,7 +38,8 @@ export const sendSuccessTweetReply = async (tweetId: string, twitterHandle: stri
 export const sendFailTweetReply = async (tweetId: string, twitterHandle: string) => {
 	logger(twitterHandle, tweetId, 'sending reply now...')
 
-	let status = '🤖 Bleep blorp. We can\'t be 100% sure you are human automatically! Hang tight and we will send some of our humans to check!'
+	let status = '🤖 Bleep blorp. We can\'t automatically be 100% sure you are human!'
+			+ '\n\n If you feel that this is a mistake, please email us at team@arweave.org'
 
 	let tweet = await twit.post('statuses/update', {
 		status,
