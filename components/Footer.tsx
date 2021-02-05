@@ -10,6 +10,7 @@ const Footer = () => {
 						<div className="footer__section space">
 							<a href="https://www.arweave.org/"><img src="/assets/footer-logo.svg"/></a>
 							<div className="links">
+								<a href="//docs.arweave.org/info/wallets/arweave-web-extension-wallet">Arweave Wallet</a>
 								<a href="https://www.arweave.org/technology#papers">Papers</a>
 								<a href="https://www.arweave.org/technology#blockweaves">Blockweaves and Proof of Access</a>
 								<a href="https://www.arweave.org/technology#endowment">Storage Endowment</a>
