@@ -17,8 +17,6 @@ interface TweetSearchResult extends TweetDataResult {
 
 export const getTweetData = async (address: string): Promise<TweetDataResult>  => {
 
-  logger(address, 'searching tweets')
-
   const res = await Axios({
     method: 'GET',
     url: 'https://api.twitter.com/1.1/search/tweets.json',
@@ -39,7 +37,7 @@ export const getTweetData = async (address: string): Promise<TweetDataResult>  =
     const twitterHandle: string = tweet.user.screen_name
     const twitterId: string = tweet.user.id_str
     const tweetId: string = tweet.id_str
-    logger(address, 'tweet found:', twitterHandle, twitterId, tweetId, tweet.text)
+    logger(address, 'tweet found', 'twitterHandle:', twitterHandle, 'twitterId:', twitterId, 'tweetId:', tweetId, tweet.text)
     
     return {
       value: true,
