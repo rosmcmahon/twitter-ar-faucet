@@ -1,11 +1,10 @@
 const greenlock = require('greenlock-express')
-const path = require('path')
+const fs = require('fs')
+const { EOL } = require('os')
 
 // server.js
-const http = require('http')
-const https = require('https')
 const { parse } = require('url')
-const redirectHttps = require('redirect-https')
+// const redirectHttps = require('redirect-https')
 const next = require('next')
 
 const dev = process.env.NODE_ENV !== 'production'
@@ -23,6 +22,14 @@ greenlock
 
 function httpsWorker(glx) {
 	nextApp.prepare().then(() => {
+
+		console.log('* SERVER WAS STARTED *')
+		fs.appendFile(
+			'server-logs.log', 
+			new Date().toUTCString() + '\t' + '* SERVER WAS STARTED *' + EOL,
+			()=>{}
+		)
+
 		if(dev){
 			let httpServer = glx.httpServer((req, res) => {
 				const parsedUrl = parse(req.url, true)
