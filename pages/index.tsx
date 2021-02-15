@@ -80,14 +80,14 @@ export default IndexPage
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
-  
   const ip = context.req.socket.remoteAddress
-  logger(ip, 'index page load', new Date().toUTCString())
   
   ip && storeIP(ip)
   
   const dbHeartbeat = await getDbHeartbeat()
   const rateLimit = (getRateLimitWait() > 0)
+
+  logger(ip, 'index page load', 'HB:'+dbHeartbeat, 'TwitterRL:'+rateLimit, new Date().toUTCString())
   
   return{
     props: {

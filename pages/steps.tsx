@@ -112,7 +112,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
   const dbHeartbeat = await getDbHeartbeat()
   
   const ip = req.socket.remoteAddress
-  logger(ip, 'STEPS PAGE LOAD', address, new Date().toUTCString())
+  logger(ip, 'STEPS PAGE LOAD', address, 'HB:'+dbHeartbeat, 'TwitterRL:'+rateLimited, new Date().toUTCString())
 
   if(ip && !checkIP(ip)){
     logger(ip, 'REDIRECTING to index page')
