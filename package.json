@@ -4,9 +4,9 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "dev": "ts-node server.js",
+    "dev": "ts-node server.ts",
     "build": "npm install && next build",
-    "start": "cross-env NODE_ENV=production ts-node server.js",
+    "start": "cross-env NODE_ENV=production ts-node server.ts",
     "test": "jest"
   },
   "dependencies": {
