@@ -17,6 +17,7 @@ const Footer = () => {
 								<a href="https://www.arweave.org/technology#permaweb">Permaweb</a>
 								<a href="https://www.arweave.org/technology#content-moderation">Content Moderation</a>
 								<a href="https://www.arweave.org/files/arweave-press-kit-2020.zip">Press Kit</a>
+								<a href="//www.arweave.org/cookies-policy">Privacy Policy</a>
 							</div>
 						</div>
 						<div className="footer__section space">
@@ -42,7 +43,6 @@ const Footer = () => {
 					</div>
 					<div className="footer__content__company">
 						<p>Problems? <a href="mailto:team@arweave.org">team@arweave.org</a></p>
-						<p><a href="//www.arweave.org/cookies-policy">Privacy Policy</a></p>
 						<hr/>
 						<p>©
 							Copyright 2021. Minimum Spanning Technologies Limited (10889544).
