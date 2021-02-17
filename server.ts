@@ -1,11 +1,8 @@
-// const redirectHttps = require('redirect-https')
 import greenlock from 'greenlock-express'
-const fs = require('fs')
-const { EOL } = require('os')
-
 import { parse } from 'url'
 import next from 'next'
 import { IncomingMessage, ServerResponse } from 'http'
+import { logger } from './utils/logger'
 
 const dev = process.env.NODE_ENV !== 'production'
 const nextApp = next({ dev })
@@ -24,9 +21,11 @@ const mainHandler = async (req: IncomingMessage, res: ServerResponse) => {
 	const parsedUrl = parse(req.url!, true)
 	const { pathname, /*query*/ } = parsedUrl
 
-	// if(pathname === '/metrics'){
-	// 	res.writeHead(200, { 'Content-Type': 'text/plain'})
-	// 	res.end(await register.metrics())
+	// if(dev){ // need some kind of authentication for production
+	// 	if(pathname === '/metrics'){
+	// 		res.writeHead(200, { 'Content-Type': 'text/plain'})
+	// 		res.end(await register.metrics())
+	// 	}
 	// }
 	
 	nextHandler(req, res) //, parsedUrl)
@@ -35,12 +34,7 @@ const mainHandler = async (req: IncomingMessage, res: ServerResponse) => {
 function httpsWorker(glx: greenlock.glx) {
 	nextApp.prepare().then(() => {
 
-		console.log('* SERVER WAS STARTED *')
-		fs.appendFile(
-			'server-logs.log', 
-			new Date().toUTCString() + '\t' + '* SERVER WAS STARTED *' + EOL,
-			()=>{}
-		)
+		logger('* SERVER WAS STARTED *')
 
 		if(dev){
 			let httpServer = glx.httpServer(mainHandler)
