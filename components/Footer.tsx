@@ -42,6 +42,7 @@ const Footer = () => {
 					</div>
 					<div className="footer__content__company">
 						<p>Problems? <a href="mailto:team@arweave.org">team@arweave.org</a></p>
+						<p><a href="//www.arweave.org/cookies-policy">Privacy Policy</a></p>
 						<hr/>
 						<p>©
 							Copyright 2021. Minimum Spanning Technologies Limited (10889544).
@@ -51,6 +52,7 @@ const Footer = () => {
 				</div>
 				<div className="footer__content__mobile">
 					<p>Problems? <a href="mailto:team@arweave.org">team@arweave.org</a></p>
+					<p><a href="//www.arweave.org/cookies-policy">Privacy Policy</a></p>
 					<hr/>
 					<p>© Copyrights 2021 Minimum Spanning Technologies Limited</p>
 				</div>
