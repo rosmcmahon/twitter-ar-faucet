@@ -55,7 +55,7 @@ const IndexPage = ({ dbHeartbeat, rateLimit }: InferGetServerSidePropsType<typeo
                       onChange={()=>setReady(!ready)} 
                     />
                     <span className='checkmark'/>
-                    I am ready to follow the above instructions.
+                    I am ready to follow the above instructions, and agree to the Privacy Policy.
                   </label>
                   <div style={{display: 'flex', flexDirection: 'column', 
                     alignItems: 'center'}}>
