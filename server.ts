@@ -22,10 +22,10 @@ const mainHandler = async (req: IncomingMessage, res: ServerResponse) => {
 	const parsedUrl = parse(req.url!, true)
 	const { pathname } = parsedUrl
 
-	if(pathname === '/metrics'){
-		res.writeHead(200, { 'Content-Type': 'text/plain'})
-		res.end(await register.metrics())
-	}
+	// if(pathname === '/metrics'){
+	// 	res.writeHead(200, { 'Content-Type': 'text/plain'})
+	// 	res.end(await register.metrics())
+	// }
 	
 	nextHandler(req, res) //, parsedUrl)
 }
