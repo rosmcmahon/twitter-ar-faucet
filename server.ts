@@ -35,7 +35,7 @@ function httpsWorker(glx: greenlock.glx) {
 
 		logger('* SERVER WAS STARTED *')
 
-		http.createServer(async(req: IncomingMessage, res: ServerResponse) => {
+		const httpMetrics = http.createServer(async(req: IncomingMessage, res: ServerResponse) => {
 			const parsedUrl = parse(req.url!, true)
 			const { pathname } = parsedUrl
 		
@@ -43,13 +43,14 @@ function httpsWorker(glx: greenlock.glx) {
 				res.writeHead(200, { 'Content-Type': 'text/plain'})
 				res.end(await register.metrics())
 			}
-		}).listen(9100, "0.0.0.0", ()=> console.info('metrics on http://localhost:9100/metrics'))
+		})
+		httpMetrics.listen(9100, "0.0.0.0", ()=> console.info('metrics on http://localhost:9100/metrics'))
 
 		if(dev){
-			let httpServer = glx.httpServer(mainHandler)
+			const httpDev = http.createServer(mainHandler)
 
-			httpServer.listen(3210, "0.0.0.0", ()=> {
-				console.info("Dev mode. Listening on ", httpServer.address(), 'http://localhost:3210')
+			httpDev.listen(3210, "0.0.0.0", ()=> {
+				console.info("Dev mode. Listening on ", httpDev.address(), 'http://localhost:3210')
 			})
 		} else {
 

@@ -21,8 +21,7 @@ export const transferAr = async (address: string) => {
 		const txid = await uploadTx(tx, jwk)
 		logger(address, 'AR transfer success. txid:', txid)
 	} catch (e) {
-		logger(address, e.name, ':', e.message)
+		logger(address, 'AR transfer failure.', e.name, ':', e.message)
 		console.log(e)
 	}
-	
 }
