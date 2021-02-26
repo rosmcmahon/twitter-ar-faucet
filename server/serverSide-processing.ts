@@ -6,7 +6,18 @@ import { getTweetDataWithRetry } from "../services/tweet-search"
 import { logger } from "../utils/logger"
 import { sendFailTweetReply, sendSuccessTweetReply } from "../services/twitter-reply"
 import { getDbHeartbeat } from "../utils/db-heartbeat"
+import { Counter, register } from "prom-client"
 
+const ctrClaimName = 'cannon_claim_counter'
+let ctrClaim: Counter<'claim'> = register.getSingleMetric(ctrClaimName) as Counter<'claim'>
+if(!ctrClaim){
+	ctrClaim = new Counter({
+		name: ctrClaimName,
+		help: 'cannon_claim_counter' + '_help',
+		aggregator: 'sum',
+		labelNames: ['claim'],
+	})
+}
 
 export const serverSideClaimProcessing = async (address: string) => {
 	
@@ -16,6 +27,7 @@ export const serverSideClaimProcessing = async (address: string) => {
 
 	if(!tweetResult.value){
 		logger(address, 'gave up searching for tweet.', new Date().toUTCString())
+		ctrClaim.labels('giveup').inc()
 		return;
 	}
 
@@ -28,6 +40,7 @@ export const serverSideClaimProcessing = async (address: string) => {
 
 	const claim = await accountClaimed(twitterId)
 	if(claim.exists){
+		ctrClaim.labels('duplicate').inc()
 		logger(address, handle, 'already claimed', claim.exists, 'exiting.', new Date().toUTCString())
 		return;
 	}
@@ -64,9 +77,11 @@ export const serverSideClaimProcessing = async (address: string) => {
 	/* Transfer AR to the new wallet */
 
 	if(botResult.passed){
+		ctrClaim.labels('success').inc()
 		await sendSuccessTweetReply(tweetResult.tweetId!, handle)
 		await transferAr(address)
 	} else{
+		ctrClaim.labels('failed').inc()
 		await sendFailTweetReply(tweetResult.tweetId!, handle)
 		logger(handle, 'no AR transfer for this bot')
 	}
