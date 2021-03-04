@@ -21,18 +21,7 @@ export const sendSuccessTweetReply = async (tweetId: string, twitterHandle: stri
 
 	let status = `Your Arweave tokens will be transferred shortly... :-)`
 
-	let tweet = await twit.post('statuses/update', {
-		status,
-		in_reply_to_status_id: tweetId,
-		auto_populate_reply_metadata: true,
-	})
-
-	if(tweet.in_reply_to_status_id_str === tweetId){
-		logger(twitterHandle, 'success tweet reply sent', tweet.id_str)
-		return true
-	}
-	logger(twitterHandle, 'ERROR, Failed in reply to tweet')
-	return false
+	return sendTweetReply(tweetId, twitterHandle, status, 'success')
 }
 
 export const sendFailTweetReply = async (tweetId: string, twitterHandle: string) => {
@@ -41,16 +30,27 @@ export const sendFailTweetReply = async (tweetId: string, twitterHandle: string)
 	let status = '🤖 Bleep blorp. We can\'t automatically be 100% sure you are human!'
 			+ '\n\n If you feel that this is a mistake, please email us at team@arweave.org'
 
-	let tweet = await twit.post('statuses/update', {
-		status,
-		in_reply_to_status_id: tweetId,
-		auto_populate_reply_metadata: true,
-	})
-
-	if(tweet.in_reply_to_status_id_str === tweetId){
-		logger(twitterHandle, 'fail tweet reply sent', tweet.id_str)
-		return true
-	}
-	logger(twitterHandle, 'ERROR, Failed in reply to tweet')
-	return false
+	return sendTweetReply(tweetId, twitterHandle, status, 'fail')
 }
+
+const sendTweetReply = async (tweetId: string, twitterHandle: string, status: string, type: "success" | "fail") => {
+	logger(twitterHandle, tweetId, 'sending reply now...')
+
+	try{
+		let tweet = await twit.post('statuses/update', {
+			status,
+			in_reply_to_status_id: tweetId,
+			auto_populate_reply_metadata: true,
+		})
+
+		logger(twitterHandle, type + ' tweet reply sent', tweet.id_str)
+		return true
+	}catch(e) {
+		if(e.code === 385){
+			logger(twitterHandle, 'Error 385: user deleted their tweet before our reply was attached')
+		}
+		logger(twitterHandle, 'Error in reply to tweet =>', e.code + ':' + e.message)
+		return false
+	}
+}
+
