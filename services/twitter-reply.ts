@@ -43,13 +43,14 @@ const sendTweetReply = async (tweetId: string, twitterHandle: string, status: st
 		})
 
 		logger(twitterHandle, type + ' tweet reply sent', tweet.id_str)
-		return true
+		return tweet.id_str as string
 	}catch(e) {
 		if(e.code === 385){
 			logger(twitterHandle, 'Error 385: user deleted their tweet before our reply was attached')
+			return 'user deleted tweet'
 		}
 		logger(twitterHandle, 'Error in reply to tweet =>', e.code + ':' + e.message)
-		return false
+		return 'error: could not attach reply'
 	}
 }
 
