@@ -6,6 +6,7 @@ import { getTweetDataWithRetry } from "../services/tweet-search"
 import { logger } from "../utils/logger"
 import { sendFailTweetReply, sendSuccessTweetReply } from "../services/twitter-reply"
 import { getDbHeartbeat } from "../utils/db-heartbeat"
+import { logToSlack } from "../utils/slack-logger"
 import { Counter, register } from "prom-client"
 
 const ctrClaimName = 'cannon_claim_counter'
@@ -42,6 +43,11 @@ export const serverSideClaimProcessing = async (address: string) => {
 	if(claim.exists){
 		ctrClaim.labels('duplicate').inc()
 		logger(address, handle, 'already claimed', claim.exists, 'exiting.', new Date().toUTCString())
+		await logToSlack(handle, twitterId, address, {
+			botScore: 0,
+			passed: false,
+			reason: 'already claimed'
+		})
 		return;
 	}
 
@@ -56,6 +62,7 @@ export const serverSideClaimProcessing = async (address: string) => {
 
 	const botResult = await botCheck(handle)
 	logger(address, handle, twitterId, 'bot-check passed', botResult.passed, botResult.reason, new Date().toUTCString())
+	await logToSlack(handle, twitterId, address, botResult, tweetResult.tweetId!)
 
 	/* Write out resuls to DB */
 

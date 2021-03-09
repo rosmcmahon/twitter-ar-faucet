@@ -2,13 +2,13 @@ import { logger } from "../utils/logger";
 
 const Botometer = require('botometer').Botometer
 
-interface IsBotReturn {
+export interface BotCheckResult {
 	passed: boolean
 	reason: string
 	botScore: number
 }
 
-export const botCheck = async (twitterHandle: string): Promise<IsBotReturn> => {
+export const botCheck = async (twitterHandle: string): Promise<BotCheckResult> => {
 
 	/* Get the botometer score, and twitter data */
 

@@ -17,7 +17,6 @@ const twit = new Twitter({
 
 
 export const sendSuccessTweetReply = async (tweetId: string, twitterHandle: string) => {
-	logger(twitterHandle, tweetId, 'sending reply now...')
 
 	let status = `Your Arweave tokens will be transferred shortly... :-)`
 
@@ -25,7 +24,6 @@ export const sendSuccessTweetReply = async (tweetId: string, twitterHandle: stri
 }
 
 export const sendFailTweetReply = async (tweetId: string, twitterHandle: string) => {
-	logger(twitterHandle, tweetId, 'sending reply now...')
 
 	let status = '🤖 Bleep blorp. We can\'t automatically be 100% sure you are human!'
 			+ '\n\n If you feel that this is a mistake, please email us at team@arweave.org'
@@ -34,6 +32,7 @@ export const sendFailTweetReply = async (tweetId: string, twitterHandle: string)
 }
 
 const sendTweetReply = async (tweetId: string, twitterHandle: string, status: string, type: "success" | "fail") => {
+	
 	logger(twitterHandle, tweetId, 'sending reply now...')
 
 	try{
