@@ -72,12 +72,12 @@ export const serverSideClaimProcessing = async (address: string) => {
 	let tweetId_str: string
 	if(botResult.passed){
 		tweetId_str = await sendSuccessTweetReply(tweetResult.tweetId!, handle)
+		await logToSlack(handle, twitterId, address, botResult, tweetId_str)
 		await transferAr(address)
 	} else{
 		tweetId_str = await sendFailTweetReply(tweetResult.tweetId!, handle)
+		await logToSlack(handle, twitterId, address, botResult, tweetId_str)
 		logger(handle, 'no AR transfer for this bot')
 	}
-
-	await logToSlack(handle, twitterId, address, botResult, tweetId_str)
 
 }
