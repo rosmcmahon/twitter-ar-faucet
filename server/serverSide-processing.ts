@@ -49,7 +49,6 @@ export const serverSideClaimProcessing = async (address: string) => {
 
 	const botResult = await botCheck(handle)
 	logger(address, handle, twitterId, 'bot-check passed', botResult.passed, botResult.reason, new Date().toUTCString())
-	await logToSlack(handle, twitterId, address, botResult, tweetResult.tweetId!)
 
 	/* Write out resuls to DB */
 
@@ -70,12 +69,15 @@ export const serverSideClaimProcessing = async (address: string) => {
 
 	/* Transfer AR to the new wallet */
 
+	let tweetId_str: string
 	if(botResult.passed){
-		await sendSuccessTweetReply(tweetResult.tweetId!, handle)
+		tweetId_str = await sendSuccessTweetReply(tweetResult.tweetId!, handle)
 		await transferAr(address)
 	} else{
-		await sendFailTweetReply(tweetResult.tweetId!, handle)
+		tweetId_str = await sendFailTweetReply(tweetResult.tweetId!, handle)
 		logger(handle, 'no AR transfer for this bot')
 	}
+
+	await logToSlack(handle, twitterId, address, botResult, tweetId_str)
 
 }
