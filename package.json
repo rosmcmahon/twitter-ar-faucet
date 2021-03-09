@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.11.2",
+    "@slack/webhook": "^6.0.0",
     "@types/express-rate-limit": "^5.1.1",
     "ansi-colors": "^4.1.1",
     "arweave": "^1.10.2",
