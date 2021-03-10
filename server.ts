@@ -4,6 +4,7 @@ import next from 'next'
 import http, { IncomingMessage, ServerResponse } from 'http'
 import { logger } from './utils/logger'
 import { register } from 'prom-client'
+import { updateTwitterMetrics } from './utils/twitter-metrics'
 
 const dev = process.env.NODE_ENV !== 'production'
 const nextApp = next({ dev })
@@ -33,7 +34,7 @@ const mainHandler = async (req: IncomingMessage, res: ServerResponse) => {
 function httpsWorker(glx: greenlock.glx) {
 	nextApp.prepare().then(() => {
 
-		logger('* SERVER WAS STARTED *')
+		logger('* SERVER STARTING UP *')
 
 		const httpMetrics = http.createServer(async(req: IncomingMessage, res: ServerResponse) => {
 			const parsedUrl = parse(req.url!, true)
@@ -41,6 +42,7 @@ function httpsWorker(glx: greenlock.glx) {
 		
 			if(pathname === '/metrics'){
 				res.writeHead(200, { 'Content-Type': 'text/plain'})
+				await updateTwitterMetrics()
 				res.end(await register.metrics())
 			}
 		})

@@ -8,13 +8,14 @@ import { sendFailTweetReply, sendSuccessTweetReply } from "../services/twitter-r
 import { getDbHeartbeat } from "../utils/db-heartbeat"
 import { logToSlack } from "../utils/slack-logger"
 import { Counter, register } from "prom-client"
+import { metricPrefix } from "../utils/constants"
 
-const ctrClaimName = 'cannon_claim_counter'
+const ctrClaimName = metricPrefix + 'claim_counter'
 let ctrClaim: Counter<'claim'> = register.getSingleMetric(ctrClaimName) as Counter<'claim'>
 if(!ctrClaim){
 	ctrClaim = new Counter({
 		name: ctrClaimName,
-		help: 'cannon_claim_counter' + '_help',
+		help: ctrClaimName + '_help',
 		aggregator: 'sum',
 		labelNames: ['claim'],
 	})

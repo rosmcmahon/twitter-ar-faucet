@@ -21,10 +21,6 @@ export const currentTwitterReset = (newReset: number = 0) => {
 	return cachedTwitterReset;
 }
 
-export const setTwitterReset = (newReset: number) => {
-	
-}
-
 /**
  * Returns the current rate-limit wait in milliseconds
  */

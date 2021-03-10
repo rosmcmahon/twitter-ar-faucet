@@ -1,6 +1,6 @@
 import next from "next"
-import { BotCheckResult } from "../services/bot-check"
 const nextApp = next({ dev: true })
+import { BotCheckResult } from "../services/bot-check"
 import { logToSlack } from './slack-logger'
 
 
