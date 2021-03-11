@@ -5,7 +5,11 @@ import { logger } from './logger'
 
 const webhook = new IncomingWebhook(process.env.SLACK_WEBHOOK!)
 
-export const logToSlack = async (handle: string, twitterId: string, address: string, botresult: BotCheckResult, tweetId?: string) => {
+/**
+ * Removing this logging for now, as Sophie does not use it much, and I want the channel for important alerts only.
+ * Perhaps this data should be outputted to simple csv file instead?
+ */
+const logToSlack = async (handle: string, twitterId: string, address: string, botresult: BotCheckResult, tweetId?: string) => {
 
 	if(process.env.NODE_ENV !== 'production') return
 

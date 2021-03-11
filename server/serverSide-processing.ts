@@ -6,7 +6,7 @@ import { getTweetDataWithRetry } from "../services/tweet-search"
 import { logger } from "../utils/logger"
 import { sendFailTweetReply, sendSuccessTweetReply } from "../services/twitter-reply"
 import { getDbHeartbeat } from "../utils/db-heartbeat"
-import { logToSlack } from "../utils/slack-logger"
+// import { logToSlack } from "../utils/slack-logger"
 import { Counter, register } from "prom-client"
 import { metricPrefix } from "../utils/constants"
 
@@ -44,11 +44,11 @@ export const serverSideClaimProcessing = async (address: string) => {
 	if(claim.exists){
 		ctrClaim.labels('duplicate').inc()
 		logger(address, handle, 'already claimed', claim.exists, 'exiting.', new Date().toUTCString())
-		await logToSlack(handle, twitterId, address, {
-			botScore: 0,
-			passed: false,
-			reason: 'already claimed'
-		})
+		// await logToSlack(handle, twitterId, address, {
+		// 	botScore: 0,
+		// 	passed: false,
+		// 	reason: 'already claimed'
+		// })
 		return;
 	}
 
@@ -87,12 +87,12 @@ export const serverSideClaimProcessing = async (address: string) => {
 	if(botResult.passed){
 		ctrClaim.labels('success').inc()
 		tweetId_str = await sendSuccessTweetReply(tweetResult.tweetId!, handle)
-		await logToSlack(handle, twitterId, address, botResult, tweetId_str)
+		// await logToSlack(handle, twitterId, address, botResult, tweetId_str)
 		await transferAr(address)
 	} else{
 		ctrClaim.labels('failed').inc()
 		tweetId_str = await sendFailTweetReply(tweetResult.tweetId!, handle)
-		await logToSlack(handle, twitterId, address, botResult, tweetId_str)
+		// await logToSlack(handle, twitterId, address, botResult, tweetId_str)
 		logger(handle, 'no AR transfer for this bot')
 	}
 
