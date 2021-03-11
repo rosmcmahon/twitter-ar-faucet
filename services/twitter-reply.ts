@@ -44,7 +44,7 @@ export const sendSuccessTweetReply = async (tweetId: string, twitterHandle: stri
 export const sendFailTweetReply = async (tweetId: string, twitterHandle: string) => {
 
 	let status = '🤖 Bleep blorp. We can\'t automatically be 100% sure you are human!'
-			+ '\n\n If you feel that this is a mistake, please email us at team@arweave.org'
+			+ '\n\nIf you feel that this is a mistake, please email us at team@arweave.org, and paste your 43-character Arweave wallet address and Twitter profile URL in your email.'
 
 	return sendTweetReply(tweetId, twitterHandle, status, 'fail')
 }
