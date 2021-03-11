@@ -47,10 +47,10 @@ export const botCheck = async (twitterHandle: string): Promise<BotCheckResult> =
 
 	try{
 		hstBotscore.observe(display_score)
-		const universalScores = results[0].display_scores.universal
 		
 		/* Commenting out the logging of the other unused score types for now, perhaps this can be added later */
-
+		
+		// const universalScores = results[0].display_scores.universal
 		// for (const key in universalScores) {
 		// 	hstBotscore.labels(key).observe(universalScores[key])
 		// }
