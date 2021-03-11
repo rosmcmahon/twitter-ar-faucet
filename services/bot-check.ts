@@ -1,4 +1,19 @@
+import { Histogram, linearBuckets, register } from "prom-client";
+import { metricPrefix } from "../utils/constants";
 import { logger } from "../utils/logger";
+
+
+const hstBotscoreName = metricPrefix + 'botscore_histogram'
+let hstBotscore = register.getSingleMetric(hstBotscoreName) as Histogram<'score_type'>
+if(!hstBotscore){
+		hstBotscore = new Histogram({
+		name: hstBotscoreName,
+		help: hstBotscoreName + '_help',
+		labelNames: ['score_type'],
+		buckets: [1, 2, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 3, 4, 5]
+	})
+}
+
 
 const Botometer = require('botometer').Botometer
 
@@ -29,6 +44,22 @@ export const botCheck = async (twitterHandle: string): Promise<BotCheckResult> =
 	const display_score =	results[0].display_scores.universal.overall
 
 	logger(twitterHandle, screen_name, created_at, display_score)
+
+	try{
+		hstBotscore.observe(display_score)
+		const universalScores = results[0].display_scores.universal
+		
+		/* Commenting out the logging of the other unused score types for now, perhaps this can be added later */
+
+		// for (const key in universalScores) {
+		// 	hstBotscore.labels(key).observe(universalScores[key])
+		// }
+		
+	}catch(e){
+		logger('bot-check metrics Error', e.code, ':', e.message)
+	}
+
+
 
 	/* Check account age requirement - this uses > 28 days */
 
