@@ -9,6 +9,7 @@ import { getDbHeartbeat } from "../utils/db-heartbeat"
 // import { logToSlack } from "../utils/slack-logger"
 import { Counter, register } from "prom-client"
 import { metricPrefix } from "../utils/constants"
+import { slackLogger } from "../utils/slack-logger"
 
 const ctrClaimName = metricPrefix + 'claim_counter'
 let ctrClaim: Counter<'claim'> = register.getSingleMetric(ctrClaimName) as Counter<'claim'>
@@ -23,77 +24,83 @@ if(!ctrClaim){
 
 export const serverSideClaimProcessing = async (address: string) => {
 	
-	/* Wait for Tweet */
-	
-	const tweetResult = await getTweetDataWithRetry(address) 
+	try{
 
-	if(!tweetResult.value){
-		logger(address, 'gave up searching for tweet.', new Date().toUTCString())
-		ctrClaim.labels('giveup').inc()
-		return;
-	}
+		/* Wait for Tweet */
+		
+		const tweetResult = await getTweetDataWithRetry(address) 
 
-	const handle = tweetResult.handle!
-	const twitterId = tweetResult.twitterId!
+		if(!tweetResult.value){
+			logger(address, 'gave up searching for tweet.', new Date().toUTCString())
+			ctrClaim.labels('giveup').inc()
+			return;
+		}
+
+		const handle = tweetResult.handle!
+		const twitterId = tweetResult.twitterId!
 
 
 
-	/* Handle already claimed check */
+		/* Handle already claimed check */
 
-	const claim = await accountClaimed(twitterId)
-	if(claim.exists){
-		ctrClaim.labels('duplicate').inc()
-		logger(address, handle, 'already claimed', claim.exists, 'exiting.', new Date().toUTCString())
-		// await logToSlack(handle, twitterId, address, {
-		// 	botScore: 0,
-		// 	passed: false,
-		// 	reason: 'already claimed'
-		// })
-		return;
-	}
+		const claim = await accountClaimed(twitterId)
+		if(claim.exists){
+			ctrClaim.labels('duplicate').inc()
+			logger(address, handle, 'already claimed', claim.exists, 'exiting.', new Date().toUTCString())
+			// await logToSlack(handle, twitterId, address, {
+			// 	botScore: 0,
+			// 	passed: false,
+			// 	reason: 'already claimed'
+			// })
+			return;
+		}
 
-	/* Do bot check on handle */
+		/* Do bot check on handle */
 
-	// quick hb check in case we're wasting calls to botometer (& twitter search)
-	let heartbeat = await getDbHeartbeat()
-	if(!heartbeat){
-		logger(address, 'server detected no db-heartbeat. exiting', new Date().toUTCString())
-		return;
-	}
+		// quick hb check in case we're wasting calls to botometer (& twitter search)
+		let heartbeat = await getDbHeartbeat()
+		if(!heartbeat){
+			logger(address, 'server detected no db-heartbeat. exiting', new Date().toUTCString())
+			return;
+		}
 
-	const botResult = await botCheck(handle)
-	logger(address, handle, twitterId, 'bot-check passed', botResult.passed, botResult.reason, new Date().toUTCString())
+		const botResult = await botCheck(handle)
+		logger(address, handle, twitterId, 'bot-check passed', botResult.passed, botResult.reason, new Date().toUTCString())
 
-	/* Write out resuls to DB */
+		/* Write out resuls to DB */
 
-	const success = await registerUser({
-		twitterId,
-		handle,
-		address, // UI searches on this
-		approved: botResult.passed,
-		bot_score: botResult.botScore,
-		reason: botResult.reason,
-		date_handled: new Date().toUTCString(), //now
-	})
-	logger(handle, 'write to db', success, new Date().toUTCString())
-	if(!success){
-		logger(handle, 'failure to write record to db', success, 'exiting.')
-		return;
-	}
+		const success = await registerUser({
+			twitterId,
+			handle,
+			address, // UI searches on this
+			approved: botResult.passed,
+			bot_score: botResult.botScore,
+			reason: botResult.reason,
+			date_handled: new Date().toUTCString(), //now
+		})
+		logger(handle, 'write to db', success, new Date().toUTCString())
+		if(!success){
+			logger(handle, 'failure to write record to db', success, 'exiting.')
+			return;
+		}
 
-	/* Transfer AR to the new wallet */
+		/* Transfer AR to the new wallet */
 
-	let tweetId_str: string
-	if(botResult.passed){
-		ctrClaim.labels('success').inc()
-		tweetId_str = await sendSuccessTweetReply(tweetResult.tweetId!, handle)
-		// await logToSlack(handle, twitterId, address, botResult, tweetId_str)
-		await transferAr(address)
-	} else{
-		ctrClaim.labels('failed').inc()
-		tweetId_str = await sendFailTweetReply(tweetResult.tweetId!, handle)
-		// await logToSlack(handle, twitterId, address, botResult, tweetId_str)
-		logger(handle, 'no AR transfer for this bot')
-	}
+		let tweetId_str: string
+		if(botResult.passed){
+			ctrClaim.labels('success').inc()
+			tweetId_str = await sendSuccessTweetReply(tweetResult.tweetId!, handle)
+			// await logToSlack(handle, twitterId, address, botResult, tweetId_str)
+			await transferAr(address)
+		} else{
+			ctrClaim.labels('failed').inc()
+			tweetId_str = await sendFailTweetReply(tweetResult.tweetId!, handle)
+			// await logToSlack(handle, twitterId, address, botResult, tweetId_str)
+			logger(handle, 'no AR transfer for this bot')
+		}
 
+	} catch(e){
+		logger('UNHANDLED ERROR in serverSide-Processing', e.code + ':' + e.message)
+		slackLogger('🚨 ALERT! Unhandled error in serverSide-Processing 🚨', e.code + ':' + e.message)
+ }
 }
