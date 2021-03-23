@@ -1,6 +1,7 @@
 import Arweave from 'arweave'
 import { uploadTx } from 'arweave-uploader'
 import { logger } from '../utils/logger'
+import { slackLogger } from '../utils/slack-logger'
 
 const arweave = Arweave.init({ host: 'arweave.net' })
 
@@ -22,6 +23,7 @@ export const transferAr = async (address: string) => {
 		logger(address, 'AR transfer success. txid:', txid)
 	} catch (e) {
 		logger(address, 'AR transfer failure.', e.name, ':', e.message)
+		slackLogger(address, '*Possible* AR transfer failure.', e.name, ':', e.message)
 		console.log(e)
 	}
 }

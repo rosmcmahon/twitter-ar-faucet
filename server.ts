@@ -1,3 +1,4 @@
+require('dotenv').config()
 import greenlock from 'greenlock-express'
 import { parse } from 'url'
 import next from 'next'
@@ -5,6 +6,7 @@ import http, { IncomingMessage, ServerResponse } from 'http'
 import { logger } from './utils/logger'
 import { register } from 'prom-client'
 import { updateTwitterMetrics } from './utils/twitter-metrics'
+import { slackLogger } from './utils/slack-logger'
 
 const dev = process.env.NODE_ENV !== 'production'
 const nextApp = next({ dev })
@@ -35,6 +37,7 @@ function httpsWorker(glx: greenlock.glx) {
 	nextApp.prepare().then(() => {
 
 		logger('* SERVER STARTING UP *')
+		slackLogger('⚠️ Server Restarted ⚠️')
 
 		const httpMetrics = http.createServer(async(req: IncomingMessage, res: ServerResponse) => {
 			const parsedUrl = parse(req.url!, true)
