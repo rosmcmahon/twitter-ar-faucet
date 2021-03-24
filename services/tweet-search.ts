@@ -47,7 +47,7 @@ export const getTweetData = async (address: string): Promise<TweetDataResult>  =
     }
   }
 
-  logger(address, numPosts, 'tweets found')
+  // logger(address, numPosts, 'tweets found')
   
   return {
     value: false,
