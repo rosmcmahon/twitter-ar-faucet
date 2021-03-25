@@ -50,14 +50,16 @@ const webhook = new IncomingWebhook(process.env.SLACK_WEBHOOK!)
 // }
 
 export const slackLogger = async (...args: any[]) => {
-
-	// if(process.env.NODE_ENV !== 'production') return
+	let username = 'Twitter Faucet 🤖'
+	if(process.env.NODE_ENV !== 'production'){
+		username = 'Ignore these test posts'
+	}
 
 	try{
 		let text = args.join(' ')
 
 		const res = await webhook.send({
-			"username": 'Twitter Faucet 🤖',
+			"username": username,
 			"blocks": [
 				{
 					"type": "section", 
