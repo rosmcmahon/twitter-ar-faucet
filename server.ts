@@ -37,7 +37,6 @@ function httpsWorker(glx: greenlock.glx) {
 	nextApp.prepare().then(() => {
 
 		logger('* SERVER STARTING UP *')
-		slackLogger('⚠️ Server Restarted ⚠️')
 
 		const httpMetrics = http.createServer(async(req: IncomingMessage, res: ServerResponse) => {
 			const parsedUrl = parse(req.url!, true)
@@ -58,6 +57,8 @@ function httpsWorker(glx: greenlock.glx) {
 				console.info("Dev mode. Listening on ", httpDev.address(), 'http://localhost:3210')
 			})
 		} else {
+
+			slackLogger('⚠️ Server Restarted ⚠️')
 
 			// Note: You must ALSO listen on port 80 for ACME HTTP-01 Challenges
 			// (the ACME and http->https middleware are loaded by glx.httpServer)

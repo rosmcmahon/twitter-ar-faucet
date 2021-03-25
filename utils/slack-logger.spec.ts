@@ -1,7 +1,8 @@
 import next from "next"
 const nextApp = next({ dev: true })
-import { BotCheckResult } from "../services/bot-check"
-import { logToSlack } from './slack-logger'
+require('dotenv').config()
+
+import { slackLogger } from './slack-logger'
 
 
 
@@ -16,25 +17,11 @@ describe('slack logging tests', () => {
 	it('sends a test message to Slack', async () => {
 		expect.assertions(1)
 
-		const claimData = {
-			twitterId: '123',
-			handle: 'mr.mcgee',
-			address: 'abc-43',
-			approved: true,
-			bot_score: 2.1,
-			reason: 'ok',
-			date_handled: new Date().toUTCString(), 
-		}
 
-		const botResult: BotCheckResult = {
-			botScore: 4.2,
-			passed: false,
-			reason: "account too young"
-		}
+		await slackLogger('this is just a <https://arweave.net/|markdown test>')
 
 
-		const result = await logToSlack("handle_name", "123", "abc=43", botResult, '1369027886624149505')
-		expect(result).toBeTruthy()
+		expect(true).toBeTruthy()
 	})
 
 })
