@@ -82,15 +82,16 @@ export const getTweetDataWithRetry = async (address: string ): Promise<TweetSear
 
       // Adjust sleep timers for the next attempt
       sleepMs *= 2
-		} catch(err) {
-      const res = err.response
+		} catch(e) {
+      const res = e.response
       
-			if(res.status === 429){
+			if(res.status && res.status === 429){
         currentTwitterReset( Number(res.headers['x-rate-limit-reset']) )
         logger(address,'**(Server: Twitter RateLimit applied)**', res.status, res.statusText, 'added ' + getRateLimitWait() + 'ms extra')
         
 			} else{
-				throw err
+        logger('UNHANDLED ERROR in getTweetDataWithRetry')//, e.code + ':' + e.message)
+				throw e
 			}
     }
 	}
@@ -108,7 +109,7 @@ export const getTweetHandleOrWaitTime = async (address: string): Promise<TweetSe
   } 
   catch (e) {
     const res = e.response
-    if(res.status === 429){
+    if(res.status && res.status === 429){
       let rateLimitReset = Number( res.headers['x-rate-limit-reset'] )
       currentTwitterReset( rateLimitReset )
       logger(address,'**(API: Twitter RateLimit applied)**', res.status, res.statusText, rateLimitReset) 
@@ -117,6 +118,7 @@ export const getTweetHandleOrWaitTime = async (address: string): Promise<TweetSe
         rateLimitReset,
       }
     } else{
+      logger('UNHANDLED ERROR in getTweetHandleOrWaitTime')//, e.code + ':' + e.message)
       throw e
     }
   }
