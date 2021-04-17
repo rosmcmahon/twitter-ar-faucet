@@ -27,6 +27,7 @@ export const updateTwitterMetrics = async() => {
 	/* do not make too many requests - rate-limit averages to 1 request every 5 seconds */
 	const now = new Date().valueOf() //millisecs
 	if((now - _lastUpdate) > 10000){
+		logger('twitter-metrics', 'updating metrics', '_lastUpdate:',_lastUpdate, 'now:', now)
 		_lastUpdate = now
 		doUpdate()
 	}
