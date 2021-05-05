@@ -57,16 +57,15 @@ const IndexPage = ({ dbHeartbeat, rateLimit }: InferGetServerSidePropsType<typeo
                     <span className='checkmark'/>
                     I am ready to follow the above instructions, and agree to the Privacy Policy.
                   </label>
-                  <div style={{display: 'flex', flexDirection: 'column', 
-                    alignItems: 'center'}}>
-                  <button 
-                    disabled={!ready} 
-                    className='btn' 
-                    type='button'
-                    onClick={()=>window.location.href='/steps'} 
-                  >
-                    Continue
-                  </button>
+                  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <button 
+                      disabled={!ready} 
+                      className='btn' 
+                      type='button'
+                      onClick={()=>window.location.href='/steps'} 
+                    >
+                      Continue
+                    </button>
                   </div>
                 </form>
 
