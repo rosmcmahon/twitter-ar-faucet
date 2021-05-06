@@ -85,7 +85,7 @@ export const getTweetDataWithRetry = async (address: string ): Promise<TweetSear
 		} catch(e) {
       const res = e.response
       
-			if(res.status && res.status === 429){
+			if(res && res.status && res.status === 429){
         currentTwitterReset( Number(res.headers['x-rate-limit-reset']) )
         logger(address,'**(Server: Twitter RateLimit applied)**', res.status, res.statusText, 'added ' + getRateLimitWait() + 'ms extra')
         
@@ -109,7 +109,7 @@ export const getTweetHandleOrWaitTime = async (address: string): Promise<TweetSe
   } 
   catch (e) {
     const res = e.response
-    if(res.status && res.status === 429){
+    if(res && res.status && res.status === 429){
       let rateLimitReset = Number( res.headers['x-rate-limit-reset'] )
       currentTwitterReset( rateLimitReset )
       logger(address,'**(API: Twitter RateLimit applied)**', res.status, res.statusText, rateLimitReset) 
