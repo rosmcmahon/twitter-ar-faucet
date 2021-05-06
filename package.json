@@ -15,7 +15,7 @@
     "@types/express-rate-limit": "^5.1.1",
     "ansi-colors": "^4.1.1",
     "arweave": "^1.10.2",
-    "arweave-uploader": "^1.1.7",
+    "arweave-uploader": "^1.1.8",
     "axios": "^0.21.1",
     "botometer": "^1.0.12",
     "express-rate-limit": "^5.2.3",
