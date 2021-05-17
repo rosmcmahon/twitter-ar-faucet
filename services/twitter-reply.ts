@@ -7,31 +7,8 @@
  * N.B. Status of POST 'statuses/update' is not available from 'application/rate_limit_status'
  * So we have to monitor ourselves.
  */
-
 import { logger } from '../utils/logger'
-import Twitter from 'twitter-lite'
-import { metricPrefix } from '../utils/constants'
-import { Counter, register } from 'prom-client'
-
-const twit = new Twitter({
-	consumer_key: process.env.TWITTER_API_KEY!,
-	consumer_secret: process.env.TWITTER_API_SECRET!,
-	access_token_key: process.env.TWITTER_ACCESS_TOKEN,
-	access_token_secret: process.env.TWITTER_ACCESS_SECRET,
-})
-
-
-const ctrReplyName = metricPrefix + 'twit_reply_counter'
-let ctrReply = register.getSingleMetric(ctrReplyName) as Counter<'reply'>
-if(!ctrReply){
-		ctrReply = new Counter({
-		name: ctrReplyName,
-		help: ctrReplyName + '_help',
-		aggregator: 'sum',
-		labelNames: ['reply'],
-	})
-	ctrReply.labels('limit3hr').inc(300)
-}
+import { getTwitterLiteEntry } from '../utils/twitter-auth-switcher'
 
 
 export const sendSuccessTweetReply = async (tweetId: string, twitterHandle: string) => {
@@ -53,6 +30,8 @@ const sendTweetReply = async (tweetId: string, twitterHandle: string, status: st
 	
 	logger(twitterHandle, tweetId, 'sending reply now...')
 
+	const {twit, counterReply} = getTwitterLiteEntry()
+
 	try{
 		let tweet = await twit.post('statuses/update', {
 			status,
@@ -60,16 +39,16 @@ const sendTweetReply = async (tweetId: string, twitterHandle: string, status: st
 			auto_populate_reply_metadata: true,
 		})
 
-		ctrReply.labels('success').inc()
+		counterReply.labels('sent').inc()
 		logger(twitterHandle, type + ' tweet reply sent', tweet.id_str)
 		return tweet.id_str as string
 	}catch(e) {
-		// /* This status code has recently been removed from the Twitter API */
-		// if(e.code === 385){ 
-		// 	logger(twitterHandle, 'Error 385: user deleted their tweet before our reply was attached')
-		// 	return 'user deleted tweet'
-		// }
-		ctrReply.labels('failed').inc()
+		counterReply.labels('error').inc()
+		/* Status code 385 might be permanently removed from the Twitter API */
+		if(e.code && e.code === 385){ 
+			logger(twitterHandle, 'Error 385: user deleted their tweet before our reply was attached')
+			return 'user deleted tweet'
+		}
 		logger(twitterHandle, 'Error in reply to tweet =>', e.code + ':' + e.message)
 		return 'error: could not attach reply'
 	}
