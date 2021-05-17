@@ -25,14 +25,6 @@ export const getTwitterLiteEntry = () => {
 	if(x === undefined) throw new Error('no TwitterLiteEntry found.')
 	_twitterLiteEntries.push(x)
 	
-	const test = async()=>{
-		console.log('*****************************')
-		console.log('number of entries',_twitterLiteEntries.length)
-		console.log(JSON.stringify(await x.twit.getBearerToken()))
-		console.log('*****************************')
-	}
-	test()
-
 	return x
 }
 
