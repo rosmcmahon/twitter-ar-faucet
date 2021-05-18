@@ -1,6 +1,7 @@
 import { Histogram, linearBuckets, register } from "prom-client";
 import { metricPrefix } from "../utils/constants";
 import { logger } from "../utils/logger";
+import { getBotometer } from "../utils/twitterAuth-botometer";
 const Botometer = require('botometer').Botometer
 
 
@@ -28,15 +29,7 @@ export const botCheck = async (twitterHandle: string): Promise<BotCheckResult> =
 
 		/* Get the botometer score, and twitter data */
 
-		const botometer = new Botometer({
-			consumerKey: process.env.TWITTER_API_KEY,
-			consumerSecret: process.env.TWITTER_API_SECRET,
-			accessToken: process.env.TWITTER_ACCESS_TOKEN,
-			accessTokenSecret: process.env.TWITTER_ACCESS_SECRET,
-			rapidApiKey: process.env.RAPID_KEY,
-			supressLogs: false,
-			usePro: true,
-		});
+		const botometer = getBotometer()
 
 		const results = await botometer.getScores([twitterHandle]) 
 

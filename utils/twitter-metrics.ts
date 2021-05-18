@@ -11,12 +11,22 @@ interface RateLimit {
 
 const twitPrefix = metricPrefix + 'twit_limits_'
 
-const gauSearchName = twitPrefix + 'search_gauge'
-let gauSearch = register.getSingleMetric(gauSearchName) as Gauge<'name'>
-if(!gauSearch){
-		gauSearch = new Gauge({
-		name: gauSearchName,
-		help: gauSearchName + '_help',
+const gauSearchNameDaisy = twitPrefix + 'search_gauge'
+let gauSearchDaisy = register.getSingleMetric(gauSearchNameDaisy) as Gauge<'name'>
+if(!gauSearchDaisy){
+		gauSearchDaisy = new Gauge({
+		name: gauSearchNameDaisy,
+		help: gauSearchNameDaisy + '_help',
+		labelNames: ['name'],
+	})
+}
+
+const gauSearchName1Rover = twitPrefix + 'search_gauge1'
+let gauSearch1Rover = register.getSingleMetric(gauSearchName1Rover) as Gauge<'name'>
+if(!gauSearch1Rover){
+		gauSearch1Rover = new Gauge({
+		name: gauSearchName1Rover,
+		help: gauSearchName1Rover + '_help',
 		labelNames: ['name'],
 	})
 }
@@ -34,17 +44,33 @@ export const updateTwitterMetrics = async() => {
 }
 const doUpdate = async() => {
 	try{
-		const res = await axios.get('https://api.twitter.com/1.1/application/rate_limit_status.json?resources=search', {
+
+		const resDaisy = await axios.get('https://api.twitter.com/1.1/application/rate_limit_status.json?resources=search', {
 			headers: {
 				Authorization: `Bearer ${process.env.BEARER_TOKEN}`,
 			}
 		})
 
-		const searchLimits: RateLimit = res.data.resources.search['/search/tweets']
+		const searchLimitsDaisy: RateLimit = resDaisy.data.resources.search['/search/tweets']
 
-		for (const key in searchLimits) {
-			gauSearch.labels(key).set(searchLimits[key as keyof RateLimit])
+		for (const key in searchLimitsDaisy) {
+			gauSearchDaisy.labels(key).set(searchLimitsDaisy[key as keyof RateLimit])
 		}
+
+		
+		const res1Rover = await axios.get('https://api.twitter.com/1.1/application/rate_limit_status.json?resources=search', {
+			headers: {
+				Authorization: `Bearer ${process.env.BEARER_TOKEN1}`,
+			}
+		})
+
+		const searchLimits1Rover: RateLimit = res1Rover.data.resources.search['/search/tweets']
+
+		for (const key in searchLimits1Rover) {
+			gauSearch1Rover.labels(key).set(searchLimits1Rover[key as keyof RateLimit])
+		}
+
+
 
 	}catch(e){
 		logger('twitter-metrics Error', e.code, ':', e.message)

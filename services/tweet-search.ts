@@ -15,6 +15,16 @@ interface TweetSearchResult extends TweetDataResult {
   rateLimitReset: number 
 }
 
+let _toggle = true
+const getBearer = ()=>{
+  _toggle = !_toggle
+  if(_toggle){
+    return process.env.BEARER_TOKEN
+  }else{
+    return process.env.BEARER_TOKEN1
+  }
+}
+
 export const getTweetData = async (address: string): Promise<TweetDataResult>  => {
 
   const res = await Axios({
@@ -24,7 +34,7 @@ export const getTweetData = async (address: string): Promise<TweetDataResult>  =
       q: '"' + address + '"' // quotes are important, searching for exact string
     },
     headers: {
-      Authorization: `Bearer ${process.env.BEARER_TOKEN}`,
+      Authorization: `Bearer ${getBearer()}`,
     }
   })
   
