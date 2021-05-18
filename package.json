@@ -17,7 +17,7 @@
     "arweave": "^1.10.2",
     "arweave-uploader": "^1.1.8",
     "axios": "^0.21.1",
-    "botometer": "^1.0.12",
+    "botometer": "github:mcmonkeys1/botometer-private",
     "express-rate-limit": "^5.2.3",
     "fontsource-roboto-mono": "^3.1.5",
     "ga-4-react": "^0.1.271",
