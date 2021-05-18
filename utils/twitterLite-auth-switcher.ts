@@ -1,7 +1,10 @@
 /**
  * We're hitting Twitter API limits for max tweet replies (300/3hrs)
  * Cannot extend this limit by upgrading account - no option.
- * Workaround is to set up multiple accounts and switch between them.
+ * Workaround is to set up multiple accounts and switch between them. 
+ * N.B. Twitter does not supply rate-limits through status API for tweets, 
+ * so we need to calculate them ourselves. Currently this is for monitoring 
+ * purposes only.
  */
 import Twitter from 'twitter-lite'
 import { metricPrefix } from './constants'
