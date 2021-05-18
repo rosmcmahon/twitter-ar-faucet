@@ -8,7 +8,7 @@
  * So we have to monitor ourselves.
  */
 import { logger } from '../utils/logger'
-import { getTwitterLiteEntry } from '../utils/twitter-auth-switcher'
+import { getTwitterLiteEntry } from '../utils/twitterLite-auth-switcher'
 
 
 export const sendSuccessTweetReply = async (tweetId: string, twitterHandle: string) => {

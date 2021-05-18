@@ -4,7 +4,7 @@
  * Workaround is to set up multiple accounts and switch between them.
  */
 import Twitter from 'twitter-lite'
-import { metricPrefix } from '../utils/constants'
+import { metricPrefix } from './constants'
 import { Counter, register } from 'prom-client'
 
 interface TwitterLiteEntry {
