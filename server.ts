@@ -7,6 +7,7 @@ import { logger } from './utils/logger'
 import { register } from 'prom-client'
 import { updateTwitterMetrics } from './utils/twitter-metrics'
 import { slackLogger } from './utils/slack-logger'
+import { checkJwkBalance } from './utils/wallet-monitor'
 
 const dev = process.env.NODE_ENV !== 'production'
 const nextApp = next({ dev })
@@ -45,6 +46,7 @@ function httpsWorker(glx: greenlock.glx) {
 			if(pathname === '/metrics'){
 				res.writeHead(200, { 'Content-Type': 'text/plain'})
 				await updateTwitterMetrics()
+				checkJwkBalance()
 				res.end(await register.metrics())
 			}
 		})
