@@ -130,7 +130,7 @@ const SpinnerStep = ({address, seconds, setProcessed, maintenanceOn}: IProps) =>
 			<h1>{statusMessage}</h1>
 			{enableSubMessage && 
 				<p>
-					If you feel that this is a mistake, please email us at <a href="mailto:team@arweave.org">team@arweave.org</a>, be sure to paste your 43-character Arweave wallet address and Twitter profile URL in your email.
+					If you feel that this is a mistake, please email us at <a href="mailto:faucet@arweave.org">faucet@arweave.org</a>, be sure to paste your 43-character Arweave wallet address and Twitter profile URL in your email.
 				</p>
 			}
 			<br/>
