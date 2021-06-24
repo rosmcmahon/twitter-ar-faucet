@@ -24,8 +24,12 @@ export interface BotCheckResult {
 	botScore: number
 }
 
-export const botCheck = async (twitterHandle: string): Promise<BotCheckResult> => {
+export const botCheck = async (twitterHandle: string, twitterId: string): Promise<BotCheckResult> => {
 	try{
+
+		/* Check airdrop retweeter count */
+
+		//TODO: do airdropCheck(twitterId) > 5
 
 		/* Get the botometer score, and twitter data */
 

@@ -64,7 +64,7 @@ export const serverSideClaimProcessing = async (address: string) => {
 			return;
 		}
 
-		const botResult = await botCheck(handle)
+		const botResult = await botCheck(handle, twitterId)
 		logger(address, handle, twitterId, 'bot-check passed', botResult.passed, botResult.reason, new Date().toUTCString())
 
 		/* Write out resuls to DB */
