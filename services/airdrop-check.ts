@@ -30,6 +30,7 @@ export const airdropCheck = async(twitterHandle: string, twitterId: string)=> {
 
 		let tweets: any[] = res.data
 		tweets = tweets.filter(tweet=>{ if(tweet) return tweet }) // remove any undefined (deleted)
+		logger(twitterHandle, 'number of valid tweets returned', tweets.length)
 
 		let text = ''
 		for (const tweet of tweets) {

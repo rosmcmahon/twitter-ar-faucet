@@ -68,7 +68,7 @@ const IndexPage = ({ dbHeartbeat, rateLimit }: InferGetServerSidePropsType<typeo
                     <span className='checkmark'/>
                     I am ready to follow the above instructions, and agree to the Privacy Policy.
                   </label>
-                  <p>The current reward is {REWARD_AR} AR, valued at about ${(Number(REWARD_AR)*arvalue).toFixed(2)} USD</p>
+                  <p>The current amount is {REWARD_AR} AR, valued at about ${(Number(REWARD_AR)*arvalue).toFixed(2)} USD</p>
                   <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <button 
                       disabled={!ready} 
