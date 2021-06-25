@@ -1,9 +1,10 @@
 import Arweave from 'arweave'
 import { uploadTx } from 'arweave-uploader'
+import { REWARD_AR } from '../utils/constants'
 import { logger } from '../utils/logger'
 import { slackLogger } from '../utils/slack-logger'
 
-const arweave = Arweave.init({ host: 'arweave.net' })
+const arweave = Arweave.init({ host: 'arweave.net', timeout: 60000 })
 
 export const transferAr = async (address: string) => {
 	const jwk = require('../secrets/jwk.json')
@@ -11,11 +12,11 @@ export const transferAr = async (address: string) => {
 	logger(address, 'WALLET_GEN_FEE', fee,'winston', arweave.ar.winstonToAr(fee), 'AR')
 	let tx = await arweave.createTransaction({
 		target: address,
-		quantity: arweave.ar.arToWinston("0.02"),
+		quantity: arweave.ar.arToWinston(REWARD_AR),
 	}, jwk)
 	tx.addTag('App-Name', 'twitter-cannon')
 
-	/* TODO: implenent a whole retry post tx scenario */
+	/* TODO: implement a whole retry post tx scenario */
 	/* We did the above and created a library for it as it became such an issue */
 
 	try {
@@ -23,7 +24,7 @@ export const transferAr = async (address: string) => {
 		logger(address, 'AR transfer success. txid:', txid)
 	} catch (e) {
 		logger(address, 'Possible AR transfer failure.', e.name, ':', e.message)
-		slackLogger(`<https://viewblock.io/arweave/address/${address}|${address}>`, '*Possible* AR transfer failure.', e.name, ':', e.message)
+		slackLogger(`Address <https://viewblock.io/arweave/address/${address}|${address}>`, '*Possible* AR transfer failure.', e.name, ':', e.message)
 		console.log(e)
 	}
 }

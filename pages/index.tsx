@@ -1,14 +1,25 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import Maintenance from '../components/Maintenance'
 import TwitterLimit from '../components/TwitterLimit'
+import { REWARD_AR } from '../utils/constants'
 import { getDbHeartbeat } from '../utils/db-heartbeat'
 import { storeIP } from '../utils/fifo-ip'
+import { getArPrice } from '../utils/getArPrice'
 import { logger } from '../utils/logger'
 import { getRateLimitWait } from '../utils/ratelimit-singletons'
 
 const IndexPage = ({ dbHeartbeat, rateLimit }: InferGetServerSidePropsType<typeof getServerSideProps>): ReactElement => {
   const [ready, setReady] = useState(false)
+  const [arvalue, setArvalue] = useState(0)
+
+  useEffect(() => {
+    const init = async()=>{
+      setArvalue(await getArPrice())
+    }
+    init()
+  }, [])
+
   if(!dbHeartbeat){
     return <Maintenance/>
   }
@@ -57,6 +68,7 @@ const IndexPage = ({ dbHeartbeat, rateLimit }: InferGetServerSidePropsType<typeo
                     <span className='checkmark'/>
                     I am ready to follow the above instructions, and agree to the Privacy Policy.
                   </label>
+                  <p>The current reward is {REWARD_AR} AR, valued at about ${(Number(REWARD_AR)*arvalue).toFixed(2)} USD</p>
                   <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <button 
                       disabled={!ready} 
