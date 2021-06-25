@@ -2,6 +2,7 @@ import { Histogram, linearBuckets, register } from "prom-client";
 import { metricPrefix } from "../utils/constants";
 import { logger } from "../utils/logger";
 import { getBotometer } from "../utils/twitterAuth-botometer";
+import { airdropCheck } from "./airdrop-check";
 const Botometer = require('botometer').Botometer
 
 
@@ -30,6 +31,9 @@ export const botCheck = async (twitterHandle: string, twitterId: string): Promis
 		/* Check airdrop retweeter count */
 
 		//TODO: do airdropCheck(twitterId) > 5
+		// for now, just log the data
+		const count = (await airdropCheck(twitterHandle, twitterId)) || 0
+		logger(twitterHandle, '⭐ new airdop metric', count, (( count>5 )?'⛔':'✔️'), 'https://twitter.com/'+twitterHandle)
 
 		/* Get the botometer score, and twitter data */
 
