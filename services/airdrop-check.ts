@@ -17,7 +17,7 @@ export const airdropCheck = async(twitterHandle: string, twitterId: string)=> {
 		const res = await axios(`https://api.twitter.com/1.1/statuses/user_timeline.json`, {
 			params: {
 				user_id: twitterId,
-				trim_user: true,
+				// trim_user: true,
 				tweet_mode: 'extended',
 				count: 20,
 			},
@@ -26,7 +26,7 @@ export const airdropCheck = async(twitterHandle: string, twitterId: string)=> {
 			}
 		})
 
-		// console.log(res.data.length, 'tweets')
+		console.log(res.data[2])
 
 		let tweets: any[] = res.data
 		tweets = tweets.filter(tweet=>{ if(tweet) return tweet }) // remove any undefined (deleted)
@@ -41,11 +41,10 @@ export const airdropCheck = async(twitterHandle: string, twitterId: string)=> {
 			}
 		}
 
-		const matches = text.match(/airdrop|giveaway|lucky winner| rt /ig)
+		const matches = text.match(/airdrop|giveaway|giving away|lucky winner| rt[!|.| ]|repost tweet|retweet/ig)
 
 		if(matches){
 			// console.log(matches)
-			// console.log(twitterHandle, matches.length)
 			return matches.length
 		}
 		console.log(twitterHandle, 0)
