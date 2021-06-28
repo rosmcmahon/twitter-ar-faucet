@@ -34,9 +34,11 @@ export default async (
 	const { address } = request.query
 
 	//TODO: blacklist/rate-limit IPs
-	logger(address, 'API0', 'rate-limit canary on', request.socket.remoteAddress)
+	const timerRl = setTimeout(()=>{
+		logger(address, 'API0: our API rate-limit was breached for', request.socket.remoteAddress)
+	}, 60000)
 	await runMiddleware(request, response, apiLimiter)
-	logger(address, 'API0', 'rate-limit canary off')
+	clearTimeout(timerRl)
 
 	try {
 		if(!address || typeof address !== 'string' || address.length !== 43){
