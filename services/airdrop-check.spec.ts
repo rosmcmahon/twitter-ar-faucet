@@ -26,9 +26,10 @@ describe('./airdrop-check.ts test', ()=> {
 	it('test that we get airdrop counts', async()=>{
 		expect.assertions(1)
 
-		const count = await airdropCheck('Anonimbaee', '1074650536819884032')
-		console.log(count)
-		expect(typeof count).toBe('number')
+		// const count = await airdropCheck('Anonimbaee', '1074650536819884032') // replies to airdrop tweets
+		const res = await airdropCheck('NeronMinus', '1253361321745084416')
+		console.log(res)
+		expect(typeof res!.count).toBe('number')
 		
 	}, 100000)
 

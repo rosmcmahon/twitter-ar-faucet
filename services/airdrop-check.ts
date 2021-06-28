@@ -17,7 +17,6 @@ export const airdropCheck = async(twitterHandle: string, twitterId: string)=> {
 		const res = await axios(`https://api.twitter.com/1.1/statuses/user_timeline.json`, {
 			params: {
 				user_id: twitterId,
-				// trim_user: true,
 				tweet_mode: 'extended',
 				count: 20,
 			},
@@ -26,11 +25,8 @@ export const airdropCheck = async(twitterHandle: string, twitterId: string)=> {
 			}
 		})
 
-		console.log(res.data[2])
-
 		let tweets: any[] = res.data
 		tweets = tweets.filter(tweet=>{ if(tweet) return tweet }) // remove any undefined (deleted)
-		logger(twitterHandle, 'number of valid tweets returned', tweets.length)
 
 		let text = ''
 		for (const tweet of tweets) {
@@ -41,14 +37,25 @@ export const airdropCheck = async(twitterHandle: string, twitterId: string)=> {
 			}
 		}
 
-		const matches = text.match(/airdrop|giveaway|giving away|lucky winner| rt[!|.| ]|repost tweet|retweet/ig)
+		const matches = text.match(/airdrop|giveaway|giving away|lucky winner| rt[!|.| ]|repost tweet|retweet/ig) || []
 
-		if(matches){
-			// console.log(matches)
-			return matches.length
+		if(process.env.NODE_ENV !== 'production'){
+			/* debugging output here */
+			console.log(res.data[2])
+			console.log(matches)
 		}
-		console.log(twitterHandle, 0)
-		return 0;
+
+		let daysOld = null
+		// edge case: empty account & verify tweet deleted before previous api call (potentially fake account)
+		if(tweets[0]){
+			daysOld = ( new Date().valueOf() - new Date(tweets[0].user.created_at).valueOf() ) / 86400000
+		}
+
+		return {
+			count: matches.length,
+			usableTweets: tweets.length,
+			daysOld,
+		}
 	}catch(e) {
 		logger(twitterHandle, 'UNHANDLED error in airdropCheck')
 	}

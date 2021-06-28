@@ -25,15 +25,8 @@ export interface BotCheckResult {
 	botScore: number
 }
 
-export const botCheck = async (twitterHandle: string, twitterId: string): Promise<BotCheckResult> => {
+export const botCheck = async (twitterHandle: string): Promise<BotCheckResult> => {
 	try{
-
-		/* Check airdrop retweeter count */
-
-		//TODO: do airdropCheck(twitterId) > 5
-		// for now, just log the data
-		const count = (await airdropCheck(twitterHandle, twitterId)) || 0
-		logger(twitterHandle, '⭐ new airdop metric', count, (( count>5 )?'⛔':'✔️'), 'https://twitter.com/'+twitterHandle)
 
 		/* Get the botometer score, and twitter data */
 
@@ -60,7 +53,7 @@ export const botCheck = async (twitterHandle: string, twitterId: string): Promis
 		const daysOld = ( new Date().valueOf() - new Date(created_at).valueOf() ) / 86400000
 
 		if(daysOld < 28){
-			logger(twitterHandle, 'account too young:', daysOld.toFixed(1), 'days')
+			logger(twitterHandle, 'account too young:', daysOld.toFixed(1), 'days. Score', display_score)
 			return {
 				passed: false,
 				reason: 'account created ' + new Date(created_at),
