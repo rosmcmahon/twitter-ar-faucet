@@ -114,7 +114,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
   const ip = req.socket.remoteAddress
   logger(ip, 'STEPS PAGE LOAD', address, 'HB:'+dbHeartbeat, 'TwitterRL:'+rateLimited, new Date().toUTCString())
 
-  if(ip && !checkIP(ip)){
+  if(!ip || (ip && !checkIP(ip))){
     logger(ip, 'REDIRECTING to index page')
     res.statusCode = 302
     res.setHeader('Location', '/')
