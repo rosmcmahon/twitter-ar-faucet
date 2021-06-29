@@ -118,7 +118,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
     logger(ip, 'REDIRECTING to index page')
     res.statusCode = 302
     res.setHeader('Location', '/')
-    res.end()
+    // res.end()
     return { props: {} };
   }
 

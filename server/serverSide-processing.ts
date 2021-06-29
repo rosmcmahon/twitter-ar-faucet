@@ -6,12 +6,11 @@ import { getTweetDataWithRetry } from "../services/tweet-search"
 import { logger } from "../utils/logger"
 import { sendAirdropTweetReply, sendFailTweetReply, sendSuccessTweetReply } from "../services/twitter-reply"
 import { getDbHeartbeat } from "../utils/db-heartbeat"
-// import { logToSlack } from "../utils/slack-logger"
 import { Counter, register } from "prom-client"
 import { metricPrefix } from "../utils/constants"
 import { slackLogger } from "../utils/slack-logger"
 import { airdropCheck } from "../services/airdrop-check"
-import { count } from "console"
+
 
 const ctrClaimName = metricPrefix + 'claim_counter'
 let ctrClaim: Counter<'claim'> = register.getSingleMetric(ctrClaimName) as Counter<'claim'>
