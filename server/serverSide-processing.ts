@@ -4,12 +4,14 @@ import { registerUser } from "../services/db-insert-user"
 import { transferAr } from "../services/ar-transfer"
 import { getTweetDataWithRetry } from "../services/tweet-search"
 import { logger } from "../utils/logger"
-import { sendFailTweetReply, sendSuccessTweetReply } from "../services/twitter-reply"
+import { sendAirdropTweetReply, sendFailTweetReply, sendSuccessTweetReply } from "../services/twitter-reply"
 import { getDbHeartbeat } from "../utils/db-heartbeat"
 // import { logToSlack } from "../utils/slack-logger"
 import { Counter, register } from "prom-client"
 import { metricPrefix } from "../utils/constants"
 import { slackLogger } from "../utils/slack-logger"
+import { airdropCheck } from "../services/airdrop-check"
+import { count } from "console"
 
 const ctrClaimName = metricPrefix + 'claim_counter'
 let ctrClaim: Counter<'claim'> = register.getSingleMetric(ctrClaimName) as Counter<'claim'>
@@ -36,67 +38,99 @@ export const serverSideClaimProcessing = async (address: string) => {
 			return;
 		}
 
-		const handle = tweetResult.handle!
+		const twitterName = tweetResult.handle!
 		const twitterId = tweetResult.twitterId!
 
 
-
-		/* Handle already claimed check */
+		/* Already claimed check */
 
 		const claim = await accountClaimed(twitterId)
 		if(claim.exists){
 			ctrClaim.labels('duplicate').inc()
-			logger(address, handle, 'already claimed', claim.exists, 'exiting.', new Date().toUTCString())
-			// await logToSlack(handle, twitterId, address, {
-			// 	botScore: 0,
-			// 	passed: false,
-			// 	reason: 'already claimed'
-			// })
+			logger(address, twitterName, 'already claimed', claim.exists, 'exiting.', new Date().toUTCString())
 			return;
 		}
 
-		/* Do bot check on handle */
-
-		// quick hb check in case we're wasting calls to botometer (& twitter search)
+		// quick hb check in case we're wasting API calls
 		let heartbeat = await getDbHeartbeat()
 		if(!heartbeat){
 			logger(address, 'server detected no db-heartbeat. exiting', new Date().toUTCString())
 			return;
 		}
 
-		const botResult = await botCheck(handle, twitterId)
-		logger(address, handle, twitterId, 'bot-check passed', botResult.passed, botResult.reason, new Date().toUTCString())
+		let approved = true
+		let bot_score = 0
+		let reason = ''
+
+		/* Airdrop retweeter check */
+
+		const airResult = await airdropCheck(twitterName, twitterId)
+		if(airResult){
+			if(airResult.count > 4){
+				approved = false
+				reason = 'airdrop'
+			} else if(!airResult.daysOld){
+				approved = false
+				reason = 'fake. no tweets & deleted verify tweet'
+			} else if (airResult.daysOld < 28){
+				approved = false
+				reason = 'account too young'
+			}
+			/**
+			 * TODO:
+			 * airResult.count < 5-10?? => inactive account 
+			 */
+		}
+		//else case is logging an unhandled error 
+		logger(address, twitterName, 'airdrop passed', approved, reason)
+
+
+		/* Do bot check */
+
+		if(approved !== false){
+			const botResult = await botCheck(twitterName)
+			approved = botResult.passed
+			bot_score = botResult.botScore
+			reason = botResult.reason
+			logger(address, twitterName, twitterId, 'bot-check passed', botResult.passed, botResult.reason)
+		}
 
 		/* Write out resuls to DB */
 
 		const success = await registerUser({
 			twitterId,
-			handle,
+			handle: twitterName,
 			address, // UI searches on this
-			approved: botResult.passed,
-			bot_score: botResult.botScore,
-			reason: botResult.reason,
+			approved,
+			bot_score,
+			reason,
 			date_handled: new Date().toUTCString(), //now
 		})
-		logger(handle, 'write to db', success, new Date().toUTCString())
+		logger(twitterName, 'write to db', success, new Date().toUTCString())
 		if(!success){
-			logger(handle, 'failure to write record to db', success, 'exiting.')
+			logger(twitterName, 'failure to write record to db', success, 'exiting.')
 			return;
 		}
 
 		/* Transfer AR to the new wallet */
 
 		let tweetId_str: string
-		if(botResult.passed){
+		if(approved){
 			ctrClaim.labels('success').inc()
-			tweetId_str = await sendSuccessTweetReply(tweetResult.tweetId!, handle)
-			// await logToSlack(handle, twitterId, address, botResult, tweetId_str)
+			tweetId_str = await sendSuccessTweetReply(tweetResult.tweetId!, twitterName)
 			await transferAr(address)
+
+		} else if(reason === 'airdrop'){
+			ctrClaim.labels('failed').inc()
+			ctrClaim.labels('airdrop').inc()
+			tweetId_str = await sendAirdropTweetReply(tweetResult.tweetId!, twitterName)
+			logger(twitterName, 'no AR transfer for airdrop account')
+
 		} else{
 			ctrClaim.labels('failed').inc()
-			tweetId_str = await sendFailTweetReply(tweetResult.tweetId!, handle)
-			// await logToSlack(handle, twitterId, address, botResult, tweetId_str)
-			logger(handle, 'no AR transfer for this bot')
+			ctrClaim.labels('fake').inc()
+			tweetId_str = await sendFailTweetReply(tweetResult.tweetId!, twitterName)
+			logger(twitterName, 'no AR transfer for fake account')
 		}
 
 	} catch(e){

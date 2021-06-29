@@ -23,23 +23,25 @@ describe('./airdrop-check.ts test', ()=> {
 		expect(process.env.BEARER_TOKEN1).toBeDefined()
 	})
 
-	// it('test that we get airdrop counts', async()=>{
-	// 	expect.assertions(1)//handles.length)
-
-	// 	const count = await airdropCheck(handles[0].twitterHandle, handles[0].twitterId)
-	// 	expect(typeof count).toBe('number')
-		
-	// }, 100000)
-
 	it('test that we get airdrop counts', async()=>{
-		expect.assertions(handles.length)
+		expect.assertions(1)
 
-		for (const handle of handles) {
-			const count = await airdropCheck(handle.twitterHandle, handle.twitterId)
-			console.log(handle.twitterHandle, count)
-			expect(typeof count).toBe('number')
-		}
-
+		// const count = await airdropCheck('Anonimbaee', '1074650536819884032') // replies to airdrop tweets
+		const res = await airdropCheck('NeronMinus', '1253361321745084416')
+		console.log(res)
+		expect(typeof res!.count).toBe('number')
+		
 	}, 100000)
+
+	// it('test that we get airdrop counts', async()=>{
+	// 	expect.assertions(handles.length)
+
+	// 	for (const handle of handles) {
+	// 		const count = await airdropCheck(handle.twitterHandle, handle.twitterId)
+	// 		console.log(handle.twitterHandle, count)
+	// 		expect(typeof count).toBe('number')
+	// 	}
+
+	// }, 100000)
 
 })
