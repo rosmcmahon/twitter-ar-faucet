@@ -124,6 +124,12 @@ export const serverSideClaimProcessing = async (address: string) => {
 			ctrClaim.labels('airdrop').inc()
 			tweetId_str = await sendAirdropTweetReply(tweetResult.tweetId!, twitterName)
 			logger(twitterName, 'no AR transfer for airdrop account')
+			
+		} else if(reason === 'account too young' || reason.startsWith('account created ')){
+			ctrClaim.labels('failed').inc()
+			ctrClaim.labels('young').inc()
+			tweetId_str = await sendFailTweetReply(tweetResult.tweetId!, twitterName)
+			logger(twitterName, 'no AR transfer for young account')
 
 		} else{
 			ctrClaim.labels('failed').inc()
