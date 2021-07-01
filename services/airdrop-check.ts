@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { logger } from '../utils/logger'
+import { slackLogger } from '../utils/slack-logger'
 
 
 let _toggle = true
@@ -57,6 +58,7 @@ export const airdropCheck = async(twitterHandle: string, twitterId: string)=> {
 			daysOld,
 		}
 	}catch(e) {
-		logger(twitterHandle, 'UNHANDLED error in airdropCheck')
+		logger(twitterHandle, 'UNHANDLED error in airdropCheck', e.name, ':', e.message)
+		slackLogger(twitterHandle, 'UNHANDLED error in airdropCheck', e.name, ':', e.message)
 	}
 }
