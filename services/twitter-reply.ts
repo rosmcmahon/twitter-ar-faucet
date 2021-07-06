@@ -26,12 +26,12 @@ export const sendFailTweetReply = async (tweetId: string, twitterHandle: string)
 	return sendTweetReply(tweetId, twitterHandle, status, 'fail')
 }
 
-export const sendAirdropTweetReply = async (tweetId: string, twitterHandle: string) => {
+// export const sendAirdropTweetReply = async (tweetId: string, twitterHandle: string) => {
 
-	let status = '🤖 Unfortunately your account is not eligible to receive AR from this faucet.'
+// 	let status = '🤖 Unfortunately your account is not eligible to receive AR from this faucet.'
 
-	return sendTweetReply(tweetId, twitterHandle, status, 'airdrop')
-}
+// 	return sendTweetReply(tweetId, twitterHandle, status, 'airdrop')
+// }
 
 const sendTweetReply = async (tweetId: string, twitterHandle: string, status: string, type: "success" | "fail" | "airdrop") => {
 	

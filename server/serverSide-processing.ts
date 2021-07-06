@@ -4,7 +4,7 @@ import { registerUser } from "../services/db-insert-user"
 import { transferAr } from "../services/ar-transfer"
 import { getTweetDataWithRetry } from "../services/tweet-search"
 import { logger } from "../utils/logger"
-import { sendAirdropTweetReply, sendFailTweetReply, sendSuccessTweetReply } from "../services/twitter-reply"
+import { sendFailTweetReply, sendSuccessTweetReply } from "../services/twitter-reply"
 import { getDbHeartbeat } from "../utils/db-heartbeat"
 import { Counter, register } from "prom-client"
 import { metricPrefix } from "../utils/constants"
@@ -122,7 +122,7 @@ export const serverSideClaimProcessing = async (address: string) => {
 		} else if(reason === 'airdrop'){
 			ctrClaim.labels('failed').inc()
 			ctrClaim.labels('airdrop').inc()
-			tweetId_str = await sendAirdropTweetReply(tweetResult.tweetId!, twitterName)
+			tweetId_str = await sendFailTweetReply(tweetResult.tweetId!, twitterName)
 			logger(twitterName, 'no AR transfer for airdrop account')
 			
 		} else if(reason === 'account too young' || reason.startsWith('account created ')){
