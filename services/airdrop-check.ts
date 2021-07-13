@@ -40,13 +40,7 @@ export const airdropCheck = async(twitterHandle: string, twitterId: string)=> {
 
 		const matches = text.match(/airdrop|giveaway|giving away|lucky winner| rt[!|.| ]|repost tweet|retweet/ig) || []
 
-		if(process.env.NODE_ENV !== 'production'){
-			/* debugging output here */
-			// console.log(res.data[2])
-			console.log(res.data[0].user.followers_count)
-			console.log(matches)
-		}
-
+		
 		let daysOld = null
 		let followersCount = null
 		// edge case: empty account & verify tweet deleted before previous api call (potentially fake account)
@@ -54,13 +48,22 @@ export const airdropCheck = async(twitterHandle: string, twitterId: string)=> {
 			daysOld = ( new Date().valueOf() - new Date(tweets[0].user.created_at).valueOf() ) / 86400000
 			followersCount = tweets[0].user.followers_count
 		}
-
-		return {
+		
+		const results = {
 			count: matches.length,
 			usableTweets: tweets.length,
 			daysOld,
 			followersCount,
 		}
+
+		if(process.env.NODE_ENV !== 'production'){
+			/* debugging output here */
+			console.log(res.data[2])
+			console.log(matches)
+			console.log(results)
+		}
+
+		return results
 	}catch(e) {
 		logger(twitterHandle, 'UNHANDLED error in airdropCheck', e.name, ':', e.message)
 		slackLogger(twitterHandle, 'UNHANDLED error in airdropCheck', e.name, ':', e.message)
