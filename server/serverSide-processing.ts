@@ -57,20 +57,25 @@ export const serverSideClaimProcessing = async (address: string) => {
 			return;
 		}
 
+		let freePass = false // if followers > 1000
 		let approved = true
 		let bot_score = 0
 		let reason = ''
 
-		/* Airdrop retweeter check */
+		/* Airdrop retweeter & other checks */
 
 		const airResult = await airdropCheck(twitterName, twitterId)
 		if(airResult){
-			if(airResult.count > 4){
-				approved = false
-				reason = 'airdrop'
+			if(airResult.followersCount >= 1000){
+				freePass = true
+				approved = true
+				reason = 'free pass. followers_count:' + airResult.followersCount
 			} else if(!airResult.daysOld){
 				approved = false
 				reason = 'fake. no tweets & deleted verify tweet'
+			} else if(airResult.count > 4){
+				approved = false
+				reason = 'airdrop'
 			} else if (airResult.daysOld < 28){
 				approved = false
 				reason = 'account too young'
@@ -80,13 +85,13 @@ export const serverSideClaimProcessing = async (address: string) => {
 			 * airResult.count < 5-10?? => inactive account 
 			 */
 		}
-		//else case is logging an unhandled error 
+		//else case is logging an unhandled error in airdropCheck
 		logger(address, twitterName, 'airdrop passed', approved, reason)
 
 
 		/* Do bot check */
 
-		if(approved !== false){
+		if(!freePass && approved !== false){
 			const botResult = await botCheck(twitterName)
 			approved = botResult.passed
 			bot_score = botResult.botScore
@@ -116,26 +121,25 @@ export const serverSideClaimProcessing = async (address: string) => {
 		let tweetId_str: string
 		if(approved){
 			ctrClaim.labels('success').inc()
+			if(freePass){ 
+				ctrClaim.labels('freepass').inc()
+			}
 			tweetId_str = await sendSuccessTweetReply(tweetResult.tweetId!, twitterName)
 			await transferAr(address)
 
-		} else if(reason === 'airdrop'){
+		} else{ 
 			ctrClaim.labels('failed').inc()
-			ctrClaim.labels('airdrop').inc()
 			tweetId_str = await sendFailTweetReply(tweetResult.tweetId!, twitterName)
-			logger(twitterName, 'no AR transfer for airdrop account')
-			
-		} else if(reason === 'account too young' || reason.startsWith('account created ')){
-			ctrClaim.labels('failed').inc()
-			ctrClaim.labels('young').inc()
-			tweetId_str = await sendFailTweetReply(tweetResult.tweetId!, twitterName)
-			logger(twitterName, 'no AR transfer for young account')
-
-		} else{
-			ctrClaim.labels('failed').inc()
-			ctrClaim.labels('fake').inc()
-			tweetId_str = await sendFailTweetReply(tweetResult.tweetId!, twitterName)
-			logger(twitterName, 'no AR transfer for fake account')
+			if(reason === 'airdrop'){
+				ctrClaim.labels('airdrop').inc()
+				logger(twitterName, 'no AR transfer for airdrop account')
+			} else if(reason === 'account too young' || reason.startsWith('account created ')){
+				ctrClaim.labels('young').inc()
+				logger(twitterName, 'no AR transfer for young account')
+			} else{
+				ctrClaim.labels('fake').inc()
+				logger(twitterName, 'no AR transfer for fake account')
+			}
 		}
 
 	} catch(e){

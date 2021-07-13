@@ -13,6 +13,7 @@ const handles = [
 	{ twitterHandle: 'yhahaha_hayukk', twitterId: '1149830620803059712' },
 	{ twitterHandle: 'r3lzdrops', twitterId: '403475616' },
 	{ twitterHandle: 'kalpeshdave255', twitterId: '741923463959482368' },
+	{ twitterHandle: 'MSanchezWorld', twitterId: '37907055' }, //many followers
 ]
 
 describe('./airdrop-check.ts test', ()=> {
@@ -27,8 +28,8 @@ describe('./airdrop-check.ts test', ()=> {
 		expect.assertions(1)
 
 		// const count = await airdropCheck('Anonimbaee', '1074650536819884032') // replies to airdrop tweets
-		const res = await airdropCheck('NeronMinus', '1253361321745084416')
-		console.log(res)
+		const res = await airdropCheck('MSanchezWorld', '37907055')
+		console.log('results', res)
 		expect(typeof res!.count).toBe('number')
 		
 	}, 100000)

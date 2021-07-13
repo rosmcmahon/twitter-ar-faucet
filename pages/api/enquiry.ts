@@ -9,7 +9,7 @@ import { getRateLimitWait } from '../../utils/ratelimit-singletons'
 const apiLimiter = expressRateLimit({
 	windowMs: 15 * 60 * 1000,
 	max: 18,
-	message: "Sorry, you have made too many requests. Please check Twitter for a reply to your first claim.",
+	message: "Sorry, you have made too many requests. Please come back later if you have not already claimed.",
 	headers: false,
 })
 
