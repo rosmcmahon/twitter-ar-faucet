@@ -16,7 +16,7 @@ const arweave = Arweave.init({ host: 'arweave.net' })
 const jwk = require('../secrets/jwk.json')
 
 let _lastUpdate = 0
-const UPDATE_DIFF = 5 * 60 * 1000
+const UPDATE_DIFF = 60 * 60 * 1000
 
 export const checkJwkBalance = ()=> {
 	const now = new Date().valueOf() //ms
