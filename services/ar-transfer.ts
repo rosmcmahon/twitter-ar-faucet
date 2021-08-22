@@ -3,6 +3,7 @@ import { uploadTx } from 'arweave-uploader'
 import { REWARD_AR } from '../utils/constants'
 import { logger } from '../utils/logger'
 import { slackLogger } from '../utils/slack-logger'
+import { checkJwkBalance } from '../utils/wallet-monitor'
 
 const arweave = Arweave.init({ host: 'arweave.net', timeout: 60000 })
 
@@ -27,4 +28,6 @@ export const transferAr = async (address: string) => {
 		slackLogger(`Address <https://viewblock.io/arweave/address/${address}|${address}>`, '*Possible* AR transfer failure.', e.name, ':', e.message)
 		console.log(e)
 	}
+	
+	checkJwkBalance()
 }
