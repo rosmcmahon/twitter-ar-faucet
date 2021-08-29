@@ -7,28 +7,50 @@ import { logger } from './utils/logger'
 import { register } from 'prom-client'
 import { updateTwitterMetrics } from './utils/twitter-metrics'
 import { slackLogger } from './utils/slack-logger'
+import expressRateLimit from 'express-rate-limit'
 
 const dev = process.env.NODE_ENV !== 'production'
 const nextApp = next({ dev })
 const nextHandler = nextApp.getRequestHandler()
 
 greenlock
-	.init({
-		packageRoot: __dirname,
-		configDir: './greenlock-manager',
-		maintainerEmail: 'ros@arweave.org',
-		cluster: false,
-	})
-	.ready(httpsWorker)
+.init({
+	packageRoot: __dirname,
+	configDir: './greenlock-manager',
+	maintainerEmail: 'ros@arweave.org',
+	cluster: false,
+})
+.ready(httpsWorker)
+
+const ipLimiter = expressRateLimit({
+	windowMs: 15 * 60 * 1000,
+	max: 10,
+	headers: false,
+})
 
 const mainHandler = async (req: IncomingMessage, res: ServerResponse) => {
 	const parsedUrl = parse(req.url!, true)
 	const { pathname } = parsedUrl
 
-	// if(pathname === '/metrics'){
-	// 	res.writeHead(200, { 'Content-Type': 'text/plain'})
-	// 	res.end(await register.metrics())
-	// }
+	if(pathname === '/steps'){
+		const ipAddress = req.socket.remoteAddress
+		await new Promise((resolve, reject)=>{
+			const fakeRes = Object.assign({
+				status: function(n: number){ res.statusCode = n; return this},
+				send: (msg: string)=>{ 
+					res.writeHead(429)
+					res.end('<h1>Sorry, too many attempts. Please come back later.</h1>')
+					logger(ipAddress, 'this ip was rate-limited in the Steps route')
+				}
+			}, res)
+			ipLimiter(req as any, fakeRes as any, (result: any)=>{
+				if(result instanceof Error){
+					return reject(result)
+				}
+				return resolve(result)
+			})
+		})
+	}
 	
 	nextHandler(req, res) //, parsedUrl)
 }
