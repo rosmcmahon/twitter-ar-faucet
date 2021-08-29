@@ -32,10 +32,11 @@ export default async (
 ) => {
 
 	const { address } = request.query
+	const ipAddress = request.socket.remoteAddress
 
 	//TODO: blacklist/rate-limit IPs
 	const timerRl = setTimeout(()=>{
-		logger(address, 'API: our API rate-limit was breached for', request.socket.remoteAddress)
+		logger(address, 'API: our API rate-limit was breached for', ipAddress)
 	}, 60000)
 	await runMiddleware(request, response, apiLimiter)
 	clearTimeout(timerRl)
@@ -45,7 +46,7 @@ export default async (
 			return response.status(400).json({ error: 'invalid parameter' })
 		}
 
-		logger(address, 'API was called from', request.socket.remoteAddress)
+		logger(address, 'API was called from', ipAddress)
 
 		/* Step 1. Check for rate-limiting */
 
