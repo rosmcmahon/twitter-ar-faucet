@@ -7,6 +7,7 @@
     "dev": "ts-node server.ts",
     "build": "npm install && next build",
     "start": "cross-env NODE_ENV=production ts-node server.ts",
+    "psql": "docker exec -it twitter-cannon_dbpostgres_1 psql -U postgres twittercannon",
     "postinstall": "next telemetry disable",
     "test": "jest"
   },
