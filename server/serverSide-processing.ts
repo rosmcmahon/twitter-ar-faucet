@@ -102,7 +102,7 @@ export const serverSideClaimProcessing = async (address: string) => {
 				logger(address, twitterName, twitterId, '⭐ Ignoring error in bot-check during downtime.', e.name, ':', e.message)
 				slackLogger(address, twitterName, twitterId, '⭐ Ignoring error in bot-check during downtime. Applying alternatives.', e.name, ':', e.message)
 				//do not check if airResult is defined. if it's not we want this to crash out as there will be no protection
-				if(airResult!.usableTweets < 10){
+				if(airResult && (airResult.usableTweets < 10)){
 					approved = false
 					reason = 'fake. not enough usable tweets. too many deleted or inactive account.'
 				}
