@@ -98,7 +98,7 @@ export const serverSideClaimProcessing = async (address: string) => {
 				bot_score = botResult.botScore
 				reason = botResult.reason
 				logger(address, twitterName, twitterId, 'bot-check passed', botResult.passed, botResult.reason)
-			}catch(e){
+			}catch(e:any){
 				logger(address, twitterName, twitterId, '⭐ Ignoring error in bot-check during downtime.', e.name, ':', e.message)
 				slackLogger(address, twitterName, twitterId, '⭐ Ignoring error in bot-check during downtime. Applying alternatives.', e.name, ':', e.message)
 				//do not check if airResult is defined. if it's not we want this to crash out as there will be no protection
@@ -152,8 +152,8 @@ export const serverSideClaimProcessing = async (address: string) => {
 			}
 		}
 
-	} catch(e){
-		logger('UNHANDLED ERROR in serverSide-Processing', e.code + ':' + e.message)
-		slackLogger('🚨 ALERT! Unhandled error in serverSide-Processing 🚨', e.code + ':' + e.message)
+	} catch(e: any){
+		logger(address, 'UNHANDLED ERROR in serverSide-Processing', ((e.code)? `${e.code}:`:''), e.message)
+		slackLogger(address, '🚨 ALERT! Unhandled error in serverSide-Processing 🚨', ((e.code)? `${e.code}:`:''), e.message)
  }
 }

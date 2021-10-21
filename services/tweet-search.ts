@@ -92,15 +92,20 @@ export const getTweetDataWithRetry = async (address: string ): Promise<TweetSear
 
       // Adjust sleep timers for the next attempt
       sleepMs *= 2
-		} catch(e) {
+		} catch(e: any) {
       const res = e.response
       
-			if(res && res.status && res.status === 429){
-        currentTwitterReset( Number(res.headers['x-rate-limit-reset']) )
-        logger(address,'**(Server: Twitter RateLimit applied)**', res.status, res.statusText, 'added ' + getRateLimitWait() + 'ms extra')
-        
+			if(res && res.status){
+        if(res.status === 429){
+          currentTwitterReset( Number(res.headers['x-rate-limit-reset']) )
+          logger(address,'**(Server: Twitter RateLimit applied)**', res.status, res.statusText, 'added ' + getRateLimitWait() + 'ms extra')
+        }
+        if(res.status===401){
+          tries++
+          logger(address, 'Twitter undefined auth access 401 error. Retrying')
+        }
 			} else{
-        logger('UNHANDLED ERROR in getTweetDataWithRetry')//, e.code + ':' + e.message)
+        logger(address, 'UNHANDLED ERROR in getTweetDataWithRetry')//, e.code + ':' + e.message)
 				throw e
 			}
     }
@@ -114,10 +119,10 @@ export const getTweetDataWithRetry = async (address: string ): Promise<TweetSear
 }
 
 export const getTweetHandleOrWaitTime = async (address: string): Promise<TweetSearchResult> => {
-  try {
+  try{
     return Object.assign({rateLimitReset: 0}, await getTweetData(address))
   } 
-  catch (e) {
+  catch(e:any){
     const res = e.response
     if(res && res.status && res.status === 429){
       let rateLimitReset = Number( res.headers['x-rate-limit-reset'] )
@@ -128,7 +133,7 @@ export const getTweetHandleOrWaitTime = async (address: string): Promise<TweetSe
         rateLimitReset,
       }
     } else{
-      logger('UNHANDLED ERROR in getTweetHandleOrWaitTime')//, e.code + ':' + e.message)
+      logger(address, 'UNHANDLED ERROR in getTweetHandleOrWaitTime')//, e.code + ':' + e.message)
       throw e
     }
   }
