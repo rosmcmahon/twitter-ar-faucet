@@ -40,7 +40,7 @@ const mainHandler = async (req: IncomingMessage, res: ServerResponse) => {
 				send: (msg: string)=>{ 
 					res.writeHead(429)
 					res.end('<h1>Sorry, too many attempts. Please come back later.</h1>')
-					logger(ipAddress, 'this ip was rate-limited in the Steps route')
+					logger(ipAddress, 'ip rate-limited in Steps route')
 				}
 			}, res)
 			ipLimiter(req as any, fakeRes as any, (result: any)=>{
