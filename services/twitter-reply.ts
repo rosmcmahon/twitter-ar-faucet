@@ -8,8 +8,10 @@
  * So we have to monitor ourselves.
  */
 import { logger } from '../utils/logger'
+import { slackLogger } from '../utils/slack-logger'
 import { getTwitterLiteEntry } from '../utils/twitterAuth-twitterLite'
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const sendSuccessTweetReply = async (tweetId: string, twitterHandle: string) => {
 
@@ -39,25 +41,42 @@ const sendTweetReply = async (tweetId: string, twitterHandle: string, status: st
 
 	const {twit, counterReply} = getTwitterLiteEntry()
 
-	try{
-		let tweet = await twit.post('statuses/update', {
-			status,
-			in_reply_to_status_id: tweetId,
-			auto_populate_reply_metadata: true,
-		})
-
-		counterReply.labels('sent').inc()
-		logger(twitterHandle, type + ' tweet reply sent', tweet.id_str)
-		return tweet.id_str as string
-	}catch(e) {
-		counterReply.labels('error').inc()
-		/* Status code 385 might be permanently removed from the Twitter API */
-		if(e.code && e.code === 385){ 
-			logger(twitterHandle, 'Error 385: user deleted their tweet before our reply was attached')
-			return 'user deleted tweet'
+	//adding this loop for Twitter connection problems
+	const doLoop = async()=>{
+		try{
+			let tweet = await twit.post('statuses/update', {
+				status,
+				in_reply_to_status_id: tweetId,
+				auto_populate_reply_metadata: true,
+			})
+	
+			counterReply.labels('sent').inc()
+			logger(twitterHandle, type + ' tweet reply sent', tweet.id_str)
+			return tweet.id_str as string // this is just for unit test
+		}catch(e:any) {
+			counterReply.labels('error').inc()
+			if(e.code){
+				if(e.code === 385){ 
+					/* Status code 385 may be permanently removed from the Twitter API */
+					logger(twitterHandle, 'Error 385: user deleted their tweet before our reply was attached')
+					return 'user deleted tweet'
+				}
+				if(e.code === 'ECONNRESET'){ 
+					logger(twitterHandle,  'Error in reply to tweet =>', e.code + ':' + e.message, 'Retying in 30 seconds...')
+					await sleep(30000)
+					return 'ECONNRESET'
+				}
+			}
+			logger(twitterHandle, 'UNHANDLED Error in reply to tweet =>', e.code + ':' + e.message)
+			slackLogger(twitterHandle, 'UNHANDLED Error in reply to tweet =>', e.code + ':' + e.message)
+			return 'error: could not attach reply'
 		}
-		logger(twitterHandle, 'Error in reply to tweet =>', e.code + ':' + e.message)
-		return 'error: could not attach reply'
 	}
+
+	let response = ''
+	do{
+		response = await doLoop()
+	}while(response === 'ECONNRESET')
+	return response;
 }
 

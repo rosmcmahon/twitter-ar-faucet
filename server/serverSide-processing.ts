@@ -128,18 +128,17 @@ export const serverSideClaimProcessing = async (address: string) => {
 
 		/* Transfer AR to the new wallet */
 
-		let tweetId_str: string
 		if(approved){
 			ctrClaim.labels('success').inc()
 			if(freePass){ 
 				ctrClaim.labels('freepass').inc()
 			}
-			tweetId_str = await sendSuccessTweetReply(tweetResult.tweetId!, twitterName)
+			sendSuccessTweetReply(tweetResult.tweetId!, twitterName)
 			await transferAr(address)
 
 		} else{ 
 			ctrClaim.labels('failed').inc()
-			tweetId_str = await sendFailTweetReply(tweetResult.tweetId!, twitterName)
+			sendFailTweetReply(tweetResult.tweetId!, twitterName)
 			if(reason === 'airdrop'){
 				ctrClaim.labels('airdrop').inc()
 				logger(twitterName, 'no AR transfer for airdrop account')
