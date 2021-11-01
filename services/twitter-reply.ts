@@ -67,7 +67,7 @@ const sendTweetReply = async (tweetId: string, twitterHandle: string, status: st
 					return 'ECONNRESET'
 				}
 			}
-			logger(twitterHandle, 'UNHANDLED Error in reply to tweet =>', e.code + ':' + e.message)
+			logger(twitterHandle, 'UNHANDLED Error in reply to tweet =>', e.code + ':' + e.message, 'Full error:\n', e)
 			slackLogger(twitterHandle, 'UNHANDLED Error in reply to tweet =>', e.code + ':' + e.message)
 			return 'error: could not attach reply'
 		}
