@@ -55,19 +55,32 @@ const sendTweetReply = async (tweetId: string, twitterHandle: string, status: st
 			return tweet.id_str as string // this is just for unit test
 		}catch(e:any) {
 			counterReply.labels('error').inc()
+
+			let code = 0
+			let message = ''
 			if(e.code){
-				if(e.code === 385){ 
-					/* Status code 385 may be permanently removed from the Twitter API */
-					logger(twitterHandle, 'Error 385: user deleted their tweet before our reply was attached')
-					return 'user deleted tweet'
-				}
-				if(e.code === 'ECONNRESET'){ 
-					logger(twitterHandle,  'Error in reply to tweet =>', e.code + ':' + e.message, 'Retying in 30 seconds...')
-					await sleep(30000)
-					return 'ECONNRESET'
-				}
+				code = Number(e.code)
+				message = e.message
+			}else if(e.errors && e.errors.code){ 
+				code = Number(e.errors.code)
+				message = e.errors.message
 			}
-			logger(twitterHandle, 'UNHANDLED Error in reply to tweet =>', e.code + ':' + e.message, 'Full error:\n', e)
+
+			if(code === 385){ 
+				logger(twitterHandle, code, ':', message)
+				return 'user deleted tweet'
+			}
+			if(code === 433){
+				logger(twitterHandle, code, ':', message)
+				return 'user restricted replies to tweet'
+			}
+			if(e.code === 'ECONNRESET'){ 
+				logger(twitterHandle,  'Error in reply to tweet =>', e.code + ':' + e.message, 'Retying in 30 seconds...')
+				await sleep(30000)
+				return 'ECONNRESET'
+			}
+			
+			logger(twitterHandle, 'UNHANDLED Error in reply to tweet =>', e.code + ':' + e.message, 'Full error:\n', JSON.stringify(e))
 			slackLogger(twitterHandle, 'UNHANDLED Error in reply to tweet =>', e.code + ':' + e.message)
 			return 'error: could not attach reply'
 		}
