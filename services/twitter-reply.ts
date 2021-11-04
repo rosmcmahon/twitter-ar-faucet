@@ -61,9 +61,9 @@ const sendTweetReply = async (tweetId: string, twitterHandle: string, status: st
 			if(e.code){
 				code = Number(e.code)
 				message = e.message
-			}else if(e.errors && e.errors.code){ 
-				code = Number(e.errors.code)
-				message = e.errors.message
+			}else if(e.errors && e.errors[0] && e.errors[0].code){ 
+				code = Number(e.errors[0].code)
+				message = e.errors[0].message
 			}
 
 			if(code === 385){ 
