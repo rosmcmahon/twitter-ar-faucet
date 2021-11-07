@@ -1,3 +1,4 @@
+require('dotenv').config()
 import next from "next"
 const nextApp = next({ dev: true })
 import { accountClaimed } from './db-claimed-check'

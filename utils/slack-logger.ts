@@ -78,7 +78,7 @@ export const slackLogger = async (...args: any[]) => {
 			]
 		})
 		return res
-	}catch(e){
+	}catch(e:any){
 		logger('error in slackLogger', e.code, ':', e.message)
 	}
 }
