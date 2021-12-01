@@ -5,6 +5,7 @@ import { getBotometer } from "../utils/twitterAuth-botometer";
 import { airdropCheck } from "./airdrop-check";
 const Botometer = require('botometer').Botometer
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 const hstBotscoreName = metricPrefix + 'botscore_histogram'
 let hstBotscore = register.getSingleMetric(hstBotscoreName) as Histogram<'score_type'>
@@ -31,8 +32,17 @@ export const botCheck = async (twitterHandle: string): Promise<BotCheckResult> =
 		/* Get the botometer score, and twitter data */
 
 		const botometer = getBotometer()
-
-		const results = await botometer.getScores([twitterHandle]) 
+		let results: any[] = []
+		let tries = 3
+		while(--tries){
+			results = await botometer.getScores([twitterHandle]) 
+			if(results !== null){ 
+				break;
+			}else{
+				logger(twitterHandle, 'botometer.getScores: "null". sleep 30. tries', tries)
+				await sleep(50000)
+			}
+		}
 
 		const screen_name =		results[0].user.user_data.screen_name
 		const created_at =		results[0].user.user_data.created_at
