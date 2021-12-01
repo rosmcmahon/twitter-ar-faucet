@@ -27,19 +27,20 @@ export interface BotCheckResult {
 }
 
 export const botCheck = async (twitterHandle: string): Promise<BotCheckResult> => {
+
+	let results: any[] = []
 	try{
 
 		/* Get the botometer score, and twitter data */
 
 		const botometer = getBotometer()
-		let results: any[] = []
 		let tries = 3
 		while(--tries){
 			results = await botometer.getScores([twitterHandle]) 
-			if(results !== null){ 
+			if(results !== null && results.length > 0){ 
 				break;
 			}else{
-				logger(twitterHandle, 'botometer.getScores: "null". sleep 30. tries', tries)
+				logger(twitterHandle, 'botometer.getScores: [] or null. sleep 30. tries', tries)
 				await sleep(50000)
 			}
 		}
@@ -88,6 +89,7 @@ export const botCheck = async (twitterHandle: string): Promise<BotCheckResult> =
 		}
 
 	}catch(e:any){
+		logger(twitterHandle, 'value of "results":', results)
 		if(e.code && e.code === 136){
 			logger(twitterHandle, 'Error: You have been blocked from viewing this user\'s profile.')
 			return {
