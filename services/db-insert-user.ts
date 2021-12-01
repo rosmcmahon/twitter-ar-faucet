@@ -14,12 +14,12 @@ export const registerUser = async (record: UserRecord) => {
 		}
 		return true
 		
-	} catch (error) {
+	} catch (e:any) {
 		logger('An error occurred in registerUser')
-		if(error.code && Number(error.code) === 23505){
-			logger('Duplicate key value violates unique constraint', error.detail)
+		if(e.code && Number(e.code) === 23505){
+			logger('Duplicate key value violates unique constraint', e.detail)
 		} else {
-			logger(error)
+			logger(e)
 		}
 		return false
 	}

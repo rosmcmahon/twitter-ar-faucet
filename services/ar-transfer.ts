@@ -23,7 +23,7 @@ export const transferAr = async (address: string) => {
 
 		const txid = await uploadTx(tx, jwk, address)
 		logger(address, 'AR transfer success. txid:', txid)
-	} catch (e) {
+	} catch (e:any) {
 		logger(address, 'Possible AR transfer failure.', e.name, ':', e.message)
 		slackLogger(`Address <https://viewblock.io/arweave/address/${address}|${address}>`, '*Possible* AR transfer failure.', e.name, ':', e.message)
 		console.log(e)

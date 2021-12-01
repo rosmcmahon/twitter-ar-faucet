@@ -64,7 +64,7 @@ export const airdropCheck = async(twitterHandle: string, twitterId: string)=> {
 		}
 
 		return results
-	}catch(e) {
+	}catch(e:any) {
 		logger(twitterHandle, 'UNHANDLED error in airdropCheck', e.name, ':', e.message)
 		slackLogger(twitterHandle, 'UNHANDLED error in airdropCheck', e.name, ':', e.message)
 	}

@@ -87,7 +87,7 @@ export const botCheck = async (twitterHandle: string): Promise<BotCheckResult> =
 			botScore: display_score,
 		}
 
-	}catch(e){
+	}catch(e:any){
 		if(e.code && e.code === 136){
 			logger(twitterHandle, 'Error: You have been blocked from viewing this user\'s profile.')
 			return {
