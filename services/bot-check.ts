@@ -37,10 +37,10 @@ export const botCheck = async (twitterHandle: string): Promise<BotCheckResult> =
 		let tries = 3
 		while(--tries){
 			results = await botometer.getScores([twitterHandle]) 
-			if(results !== null && results.length > 0){ 
+			if(results !== null && results.length > 0 && !results[0].error){ 
 				break;
 			}else{
-				logger(twitterHandle, 'botometer.getScores: [] or null. sleep 30. tries', tries)
+				logger(twitterHandle, 'botometer.getScores: [], null, or error. sleep 30. tries', tries)
 				await sleep(50000)
 			}
 		}
