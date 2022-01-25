@@ -77,11 +77,16 @@ const sendTweetReply = async (tweetId: string, twitterHandle: string, status: st
 			if(e.code === 'ECONNRESET'){ 
 				logger(twitterHandle,  'Error in reply to tweet =>', e.code + ':' + e.message, 'Retying in 30 seconds...')
 				await sleep(30000)
-				return 'ECONNRESET'
+				return 'ECONNRESET' //<= this is the only return currently checked below
+			}
+			if(code === 187){
+				logger(twitterHandle, code, ':', message)
+				return 'Warning. Status is a duplicate'
 			}
 			
-			logger(twitterHandle, 'UNHANDLED Error in reply to tweet =>', e.code + ':' + e.message, 'Full error:\n', JSON.stringify(e))
-			slackLogger(twitterHandle, 'UNHANDLED Error in reply to tweet =>', e.code + ':' + e.message)
+
+			logger(twitterHandle, 'UNHANDLED Error in reply to tweet =>', code + ':' + message, 'Full error:\n', JSON.stringify(e))
+			slackLogger(twitterHandle, 'UNHANDLED Error in reply to tweet =>', code + ':' + message)
 			return 'error: could not attach reply'
 		}
 	}
