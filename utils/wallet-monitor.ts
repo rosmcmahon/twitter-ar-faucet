@@ -12,7 +12,7 @@ import { slackLogger } from './slack-logger'
 // 	})
 // }
 
-const arweave = Arweave.init({ host: 'arweave.net' })
+const arweave = Arweave.init({ host: 'arweave.net', timeout: 60000 })
 const jwk = require('../secrets/jwk.json')
 
 let _lastUpdate = 0
