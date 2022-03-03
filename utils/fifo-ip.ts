@@ -1,12 +1,12 @@
 
 
 let fifo: string[] = []
-const MAX_SIZE = 20
+const MAX_SIZE = 200
 
 export const storeIP = (ip: string) => {
 	// convert from "::ffff:192.0.0.1"  to "192.0.0.1"
-	if (ip.substr(0, 7) == "::ffff:") {
-    ip = ip.substr(7)
+	if (ip.startsWith("::ffff:") ) {
+    ip = ip.substring(7)
 	}
 	
 	if(fifo.includes(ip)){
@@ -21,8 +21,8 @@ export const storeIP = (ip: string) => {
 }
 
 export const checkIP = (ip: string) => {
-	if (ip.substr(0, 7) == "::ffff:") {
-    ip = ip.substr(7)
+	if (ip.startsWith("::ffff:")) {
+    ip = ip.substring(7)
 	}
 	if(fifo.includes(ip)){
 		fifo = fifo.filter(item => item !== ip) //remove ip

@@ -35,7 +35,7 @@ const update = async()=> {
 			slackLogger('Faucet wallet balance has fallen to', ar, 'AR. Consider topping up soon.')
 		}
 		
-	}catch(e){
+	}catch(e:any){
 		slackLogger('wallet-monitor error', e.code, ':', e.message)
 	}
 }
