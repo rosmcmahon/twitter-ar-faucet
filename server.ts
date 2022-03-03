@@ -14,13 +14,13 @@ const nextApp = next({ dev })
 const nextHandler = nextApp.getRequestHandler()
 
 greenlock
-.init({
-	packageRoot: __dirname,
-	configDir: './greenlock-manager',
-	maintainerEmail: 'ros@arweave.org',
-	cluster: false,
-})
-.ready(httpsWorker)
+	.init({
+		packageRoot: __dirname,
+		configDir: './greenlock-manager',
+		maintainerEmail: 'ros@arweave.org',
+		cluster: false,
+	})
+	.ready(httpsWorker)
 
 const ipLimiter = expressRateLimit({
 	windowMs: 15 * 60 * 1000,
@@ -33,7 +33,11 @@ const mainHandler = async (req: IncomingMessage, res: ServerResponse) => {
 	const { pathname } = parsedUrl
 
 	if(pathname === '/steps'){
+		
 		const ipAddress = req.socket.remoteAddress
+		//@ts-ignore
+		req.ip = ipAddress //express-rate-limit is expecting this also
+		// console.log('req DEBUG', req)
 		await new Promise((resolve, reject)=>{
 			const fakeRes = Object.assign({
 				status: function(n: number){ res.statusCode = n; return this},

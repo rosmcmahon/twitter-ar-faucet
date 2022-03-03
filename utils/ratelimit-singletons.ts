@@ -22,7 +22,7 @@ export const currentTwitterReset = (newReset: number = 0) => {
 }
 
 /**
- * Returns the current rate-limit wait in milliseconds
+ * Returns the current twitter rate-limit wait in milliseconds
  */
 export const getRateLimitWait = () => {
 	if(cachedTwitterReset === 0){
