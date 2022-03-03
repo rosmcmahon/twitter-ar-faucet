@@ -14,10 +14,12 @@ const apiLimiter = expressRateLimit({
 })
 
 // Helper method to wait for a middleware to execute before continuing
-function runMiddleware(req: NextApiRequest, res: any, fn: any) {
+function runMiddleware(req: NextApiRequest, res: any, fn: any, address: string) {
   return new Promise((resolve, reject) => {
     fn(req, res, (result: any) => {
       if (result instanceof Error) {
+				//@ts-ignore
+				logger(address, 'API: our API rate-limit was breached for', req.ip)
         return reject(result)
       }
 
@@ -34,12 +36,8 @@ export default async (
 	const { address } = request.query
 	const ipAddress = request.socket.remoteAddress
 
-	//TODO: blacklist/rate-limit IPs
-	const timerRl = setTimeout(()=>{
-		logger(address, 'API: our API rate-limit was breached for', ipAddress)
-	}, 60000)
-	await runMiddleware(request, response, apiLimiter)
-	clearTimeout(timerRl)
+	/* Step 0. Rate-limit IPs */
+	await runMiddleware(Object.assign({ip: ipAddress},request), response, apiLimiter, address as string)
 
 	try {
 		if(!address || typeof address !== 'string' || address.length !== 43){
