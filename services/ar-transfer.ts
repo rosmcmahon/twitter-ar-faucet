@@ -5,13 +5,13 @@ import { logger } from '../utils/logger'
 import { slackLogger } from '../utils/slack-logger'
 import { checkJwkBalance } from '../utils/wallet-monitor'
 
-const arweave = Arweave.init({ host: 'arweave.net', timeout: 60000 })
+const arweave = Arweave.init({ host: 'arweave.net', timeout: 600000 })
 
 export const transferAr = async (address: string) => {
 	try {
 		const jwk = require('../secrets/jwk.json')
-		let fee = await arweave.transactions.getPrice(0, address)
-		logger(address, 'WALLET_GEN_FEE', fee,'winston', arweave.ar.winstonToAr(fee), 'AR')
+		// let fee = await arweave.transactions.getPrice(0, address)
+		// logger(address, 'WALLET_GEN_FEE', fee,'winston', arweave.ar.winstonToAr(fee), 'AR')
 		let tx = await arweave.createTransaction({
 			target: address,
 			quantity: arweave.ar.arToWinston(REWARD_AR),
