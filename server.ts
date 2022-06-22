@@ -24,7 +24,7 @@ greenlock
 
 const ipLimiter = expressRateLimit({
 	windowMs: 15 * 60 * 1000,
-	max: 20,
+	max: 10,
 	headers: false,
 })
 
