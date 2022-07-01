@@ -18,7 +18,7 @@
     "ansi-colors": "^4.1.1",
     "arweave": "^1.10.2",
     "arweave-uploader": "^1.1.12",
-    "axios": "^0.21.1",
+    "axios": "^0.27.2",
     "botometer": "github:mcmonkeys1/botometer-private",
     "express-rate-limit": "^5.2.3",
     "fontsource-roboto-mono": "^3.1.5",
