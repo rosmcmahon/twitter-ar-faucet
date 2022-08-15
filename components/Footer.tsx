@@ -25,7 +25,6 @@ const Footer = () => {
 							<div className="links space_more"><a href="https://www.arweave.org/build">Start</a>
 								<a href="https://www.arweave.org/build#interfaces">Interfaces</a>
 								<a href="https://www.arweave.org/build#resources">Resources</a>
-								<a href="http://arweave.jobs">Ecosystem Jobs</a>
 							</div>
 						</div>
 						<div className="footer__section space">
@@ -37,8 +36,10 @@ const Footer = () => {
 						</div>
 						<div className="footer__section space">
 							<h4>Get involved</h4>
-							<div className="links space_more"><a href="https://www.arweave.org/get-involved/community">Community</a>
+							<div className="links space_more">
+								<a href="https://www.arweave.org/get-involved/community">Community</a>
 								<a href="https://www.arweave.org/get-involved/grants-funding">Grants &amp; Funding</a>
+								<a href="http://arweave.jobs">Ecosystem Jobs</a>
 							</div>
 						</div>
 					</div>
