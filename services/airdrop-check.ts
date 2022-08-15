@@ -1,4 +1,5 @@
 import axios from 'axios'
+import axiosRetry from 'axios-retry'
 import { logger } from '../utils/logger'
 import { slackLogger } from '../utils/slack-logger'
 
@@ -23,7 +24,8 @@ export const airdropCheck = async(twitterHandle: string, twitterId: string)=> {
 			},
 			headers: {
 				Authorization: `Bearer ${getBearer()}`,
-			}
+			},
+			'axios-retry': { retries: 3 }
 		})
 
 		let tweets: any[] = res.data
