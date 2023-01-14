@@ -94,6 +94,7 @@ export const getTweetDataWithRetry = async (address: string ): Promise<TweetSear
       sleepMs *= 2
 		} catch(e: any) {
       const res = e.response
+      const code = e.response?.code || e.code || undefined
       
 			if(res && res.status){
         if(res.status === 429){
@@ -104,7 +105,9 @@ export const getTweetDataWithRetry = async (address: string ): Promise<TweetSear
           tries++
           logger(address, 'Twitter undefined auth access 401 error. Retrying')
         }
-			}else if(e.message && e.message === 'read ECONNRESET'){
+			}else if(code && 
+        ['ETIMEDOUT', 'ECONNRESET', 'ECONNREFUSED', 'ENOTFOUND', 'EAI_AGAIN'].includes(code)
+      ){
         tries++
         logger(address, 'Twitter gave "read ECONNRESET". Retrying')
       }else{
