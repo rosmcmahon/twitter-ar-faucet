@@ -154,7 +154,7 @@ const SpinnerStep = ({address, seconds, setProcessed, maintenanceOn}: IProps) =>
                     alignItems: 'center'}}>
 						<button 
 							className='btn primary' 
-							onClick={()=> window.open('https://www.arweave.org/wallet/complete')}
+							onClick={()=> window.open('/complete')}
 							style={{marginTop: theme.spacing(1), marginRight: theme.spacing(1)}}
 						>
 							Explore
